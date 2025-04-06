@@ -1,0 +1,47 @@
+.job-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: none;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.job-type-badge {
+  font-size: 0.8rem;
+  padding: 0.4rem 0.6rem;
+}
+
+.skill-badge {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.6rem;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+}
+
+/* Range slider styling */
+input[type="range"] {
+  height: 5px;
+  border-radius: 5px;
+  background: #e9ecef;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0d6efd;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0d6efd;
+  cursor: pointer;
+}
