@@ -1,79 +1,81 @@
-import { useEffect, useState } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
-import { supabase } from "../supabase/supabaseClient";
+import React from "react";
+import {
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Container,
+} from "@mui/material";
+
+const candidates = [
+  {
+    id: 1,
+    fullName: "John Smith",
+    email: "john.smith@example.com",
+    location: "New York, NY",
+    experience: "5 years of software development",
+  },
+  {
+    id: 2,
+    fullName: "Sarah Johnson",
+    email: "sarah.j@example.com",
+    location: "San Francisco, CA",
+    experience: "3 years of UX design",
+  },
+  {
+    id: 3,
+    fullName: "Michael Chen",
+    email: "mchen@example.com",
+    location: "Seattle, WA",
+    experience: "7 years of data science",
+  },
+  {
+    id: 4,
+    fullName: "Emily Brown",
+    email: "emily.brown@example.com",
+    location: "Austin, TX",
+    experience: "4 years of product management",
+  },
+  {
+    id: 5,
+    fullName: "David Wilson",
+    email: "david.w@example.com",
+    location: "Boston, MA",
+    experience: "6 years of full-stack development",
+  },
+];
 
 const CandidatePool = () => {
-  const [candidates, setCandidates] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchCandidates = async () => {
-      console.log("Starting to fetch candidates...");
-      try {
-        const { data, error } = await supabase.from("profiles").select("*");
-        console.log("Supabase response:", { data, error });
-
-        if (error) throw error;
-
-        console.log("Successfully fetched candidates:", data);
-        setCandidates(data || []);
-      } catch (error) {
-        console.error("Error fetching candidates:", error);
-        setError("Failed to load candidates");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCandidates();
-  }, []);
-
-  if (loading) {
-    return (
-      <Container className="py-4">
-        <div className="text-center">Loading candidates...</div>
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container className="py-4">
-        <div className="text-center text-danger">{error}</div>
-      </Container>
-    );
-  }
-
   return (
-    <Container className="py-4">
-      <h2 className="mb-4">Candidate Pool</h2>
-      <Row xs={1} md={2} lg={3} className="g-4">
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Candidate Pool
+      </Typography>
+      <Grid container spacing={3}>
         {candidates.map((candidate) => (
-          <Col key={candidate.id}>
-            <Card className="h-100 shadow-sm">
-              <Card.Body>
-                <Card.Title className="mb-3">
-                  {candidate.full_name || "Anonymous"}
-                </Card.Title>
-                <Card.Text>
-                  <div className="mb-2">
-                    <strong>Email:</strong> {candidate.email}
-                  </div>
-                  <div className="mb-2">
-                    <strong>Location:</strong>{" "}
-                    {candidate.location || "Not specified"}
-                  </div>
-                  <div>
-                    <strong>Experience:</strong>{" "}
-                    {candidate.experience || "Not specified"}
-                  </div>
-                </Card.Text>
-              </Card.Body>
+          <Grid item xs={12} sm={6} md={4} key={candidate.id}>
+            <Card sx={{ height: "100%" }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  {candidate.fullName}
+                </Typography>
+                <Typography color="text.secondary" gutterBottom>
+                  {candidate.email}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  📍 {candidate.location}
+                </Typography>
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="body2">
+                    Experience: {candidate.experience}
+                  </Typography>
+                </Box>
+              </CardContent>
             </Card>
-          </Col>
+          </Grid>
         ))}
-      </Row>
+      </Grid>
     </Container>
   );
 };
