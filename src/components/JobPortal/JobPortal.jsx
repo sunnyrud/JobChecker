@@ -30,15 +30,7 @@ const JobPortal = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   // Job type options
-  const jobTypes = [
-    "Full-Time",
-    "Part-Time",
-    "Contract",
-    "Internship",
-    "Remote",
-    "Hybrid",
-    "On-Site",
-  ];
+  const jobTypes = ["Remote", "Hybrid", "On-Site"];
 
   // Experience level options
   const experienceLevels = ["Entry Level", "Mid Level", "Senior Level"];
