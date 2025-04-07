@@ -1,12 +1,162 @@
-# React + Vite
+# Job Search Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern job search portal built with React, Vite, and Supabase. This application allows users to browse job listings, apply filters, and submit job applications.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Browse job listings with detailed information
+- Advanced filtering options (job type, experience level, salary range)
+- Real-time search functionality
+- Responsive design for all devices
+- Integration with Supabase for data storage
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Before you begin, ensure you have the following installed:
+
+- Node.js (v14.0.0 or higher)
+- npm (v6.0.0 or higher)
+
+## Step-by-Step Setup Guide
+
+### 1. Create a New Vite Project
+
+```bash
+# Create a new project with Vite
+npx create-vite@latest jobsearch --template react
+
+# Navigate to project directory
+cd jobsearch
+
+# Install base dependencies
+npm install
+```
+
+### 2. Install Required Dependencies
+
+```bash
+# Install UI framework and styling
+npm install react-bootstrap bootstrap
+
+# Install routing
+npm install react-router-dom
+
+# Install icons
+npm install react-icons
+
+# Install Supabase client
+npm install @supabase/supabase-js
+```
+
+### 3. Set Up Project Structure
+
+```bash
+# Create necessary directories
+mkdir -p src/components/JobPortal src/supabase
+
+# Create required files
+touch src/components/JobPortal/JobPortal.jsx
+touch src/components/JobPortal/JobPortal.css
+touch src/supabase/supabaseClient.js
+```
+
+### 4. Configure Supabase
+
+1. Go to [Supabase](https://supabase.com) and create a new project
+2. Create a new table named 'jobs' with the following structure:
+
+```sql
+create table jobs (
+  id bigint primary key generated always as identity,
+  job_title text not null,
+  company_name text not null,
+  location text not null,
+  job_type text not null,
+  experience text not null,
+  salary bigint not null,
+  required_skills text[] not null
+);
+```
+
+### 5. Set Up Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### 6. Configure Supabase Client
+
+In `src/supabase/supabaseClient.js`:
+
+```javascript
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+```
+
+### 7. Set Up React Router
+
+Update `src/App.jsx`:
+
+```jsx
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import JobPortal from "./components/JobPortal/JobPortal";
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<JobPortal />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
+```
+
+### 8. Add Bootstrap Styles
+
+In `src/main.jsx`:
+
+```jsx
+import "bootstrap/dist/css/bootstrap.min.css";
+```
+
+### 9. Start Development Server
+
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:5173`
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+
+## Deployment
+
+1. Build the project:
+
+```bash
+npm run build
+```
+
+2. The built files will be in the `dist` directory, ready for deployment to your preferred hosting platform.
+
+## Acknowledgments
+
+- [React](https://reactjs.org/)
+- [Vite](https://vitejs.dev/)
+- [Supabase](https://supabase.com/)
+- [React Bootstrap](https://react-bootstrap.github.io/)
+- [React Icons](https://react-icons.github.io/react-icons/)
