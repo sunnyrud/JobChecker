@@ -9,7 +9,9 @@ import { getCurrentUser, supabase } from "./supabase/supabaseClient";
 import Login from "./components/Auth/Login";
 import Dashboard from "./components/Dashboard/Dashboard";
 import JobPortal from "./components/JobPortal/JobPortal";
-import "./App.css";
+
+import Profile from "./components/Profile/Profile";
+import SidebarLayout from "./components/Layout/SidebarLayout";
 
 function AuthWrapper() {
   const [user, setUser] = useState(null);
@@ -61,11 +63,39 @@ function AuthWrapper() {
       />
       <Route
         path="/dashboard"
-        element={user ? <Dashboard /> : <Navigate to="/login" />}
+        element={
+          user ? (
+            <SidebarLayout>
+              <Dashboard />
+            </SidebarLayout>
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
       />
       <Route
         path="/job-portal"
-        element={user ? <JobPortal /> : <Navigate to="/login" />}
+        element={
+          user ? (
+            <SidebarLayout>
+              <JobPortal />
+            </SidebarLayout>
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          user ? (
+            <SidebarLayout>
+              <Profile />
+            </SidebarLayout>
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
       />
     </Routes>
   );

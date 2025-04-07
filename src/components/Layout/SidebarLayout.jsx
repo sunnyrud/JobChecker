@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Container, Nav } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { supabase } from "../../supabase/supabaseClient";
 import {
   FaTachometerAlt,
   FaBriefcase,
@@ -129,14 +130,16 @@ const SidebarLayout = ({ children }) => {
 
           <Nav.Item>
             <Nav.Link
-              as={Link}
-              to="/logout"
-              className={`d-flex align-items-center py-3 px-3 ${
-                location.pathname === "/logout"
-                  ? "active bg-primary text-white"
-                  : "text-white"
-              }`}
-              style={{ color: "#ffffff" }}
+              onClick={async () => {
+                try {
+                  await supabase.auth.signOut();
+                  window.location.href = "/login";
+                } catch (error) {
+                  console.error("Error logging out:", error);
+                }
+              }}
+              className="d-flex align-items-center py-3 px-3 text-white"
+              style={{ cursor: "pointer", color: "#ffffff" }}
             >
               <FaSignOutAlt className="me-3" />
               {!collapsed && <span>Logout</span>}

@@ -1,21 +1,30 @@
 import { useState } from "react";
 import { Container, Form, Button, Card } from "react-bootstrap";
-import SidebarLayout from "../Layout/SidebarLayout";
 
 const Profile = () => {
   const [formData, setFormData] = useState({
     college: "",
     experienceLevel: "",
     location: "",
+    jobType: "",
+    technologies: [],
   });
 
   // Hardcoded email for prototype
   const userEmail = "user@example.com";
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // For prototype, just log the form data
     console.log("Form submitted:", formData);
+    // TODO: Implement Supabase integration
+    // const { data, error } = await supabase
+    //   .from('user_profiles')
+    //   .upsert({
+    //     user_id: user.id,
+    //     ...formData,
+    //     updated_at: new Date()
+    //   });
   };
 
   const handleChange = (e) => {
@@ -26,12 +35,24 @@ const Profile = () => {
     }));
   };
 
+  const handleTechnologiesChange = (e) => {
+    const value = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
+    setFormData((prev) => ({
+      ...prev,
+      technologies: value,
+    }));
+  };
+
   return (
-    <SidebarLayout>
-      <Container fluid className="py-4">
-        <h1 className="text-center mb-2">Profile</h1>
-        <Card className="shadow-sm">
-          <Card.Body className="p-4">
+    <Container className="py-4" style={{ maxWidth: "800px" }}>
+      <div className="d-flex justify-content-center">
+        <Card className="shadow-sm w-100">
+          <Card.Body className="p-5">
+            <h1 className="text-center mb-4">Profile</h1>
+
             <div className="text-center mb-4">
               <h5 className="text-muted">Registered Email</h5>
               <p className="lead">{userEmail}</p>
@@ -66,6 +87,41 @@ const Profile = () => {
               </Form.Group>
 
               <Form.Group className="mb-3">
+                <Form.Label>Job Type Preference</Form.Label>
+                <Form.Select
+                  name="jobType"
+                  value={formData.jobType}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select job type</option>
+                  <option value="onsite">On-site</option>
+                  <option value="remote">Remote</option>
+                  <option value="hybrid">Hybrid</option>
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Technologies</Form.Label>
+                <Form.Select
+                  multiple
+                  name="technologies"
+                  value={formData.technologies}
+                  onChange={handleTechnologiesChange}
+                  style={{ height: "150px" }}
+                >
+                  <option value="javascript">JavaScript</option>
+                  <option value="python">Python</option>
+                  <option value="java">Java</option>
+                  <option value="react">React</option>
+                  <option value="node">Node.js</option>
+                  <option value="sql">SQL</option>
+                  <option value="aws">AWS</option>
+                  <option value="docker">Docker</option>
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group className="mb-3">
                 <Form.Label>Location</Form.Label>
                 <Form.Control
                   type="text"
@@ -85,8 +141,8 @@ const Profile = () => {
             </Form>
           </Card.Body>
         </Card>
-      </Container>
-    </SidebarLayout>
+      </div>
+    </Container>
   );
 };
 

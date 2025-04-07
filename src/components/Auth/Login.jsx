@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { signIn, signUp, getCurrentUser } from "../../supabase/supabaseClient";
 import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -73,120 +74,116 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
-      <Container>
-        <Row className="justify-content-center align-items-center min-vh-100">
-          <Col>
-            <div className="auth-card">
-              <h2 className="text-center mb-4">Job Search Portal</h2>
+    <div className="d-flex align-items-center justify-content-center vh-100">
+      <div className="auth-wrapper">
+        <div className="auth-card">
+          <h2 className="text-center mb-4">Job Search Portal</h2>
 
-              {error && (
-                <Alert
-                  variant={error.includes("successful") ? "success" : "danger"}
-                  className="mb-3"
-                >
-                  {error}
-                </Alert>
-              )}
+          {error && (
+            <Alert
+              variant={error.includes("successful") ? "success" : "danger"}
+              className="mb-3"
+            >
+              {error}
+            </Alert>
+          )}
 
-              {isRegistering ? (
-                <Form onSubmit={handleRegister}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Email address</Form.Label>
-                    <Form.Control
-                      type="email"
-                      placeholder="Enter email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </Form.Group>
+          {isRegistering ? (
+            <Form onSubmit={handleRegister}>
+              <Form.Group className="mb-3">
+                <Form.Label>Email address</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="Enter email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                      type="password"
-                      placeholder="Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>Confirm Password</Form.Label>
-                    <Form.Control
-                      type="password"
-                      placeholder="Confirm Password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      required
-                    />
-                  </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Confirm Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    className="w-100"
-                    disabled={loading}
-                  >
-                    {loading ? "Registering..." : "Register"}
-                  </Button>
+              <Button
+                variant="primary"
+                type="submit"
+                className="w-100"
+                disabled={loading}
+              >
+                {loading ? "Registering..." : "Register"}
+              </Button>
 
-                  <Button
-                    variant="link"
-                    className="w-100 mt-3"
-                    onClick={() => setIsRegistering(false)}
-                  >
-                    Already have an account? Sign in
-                  </Button>
-                </Form>
-              ) : (
-                <Form onSubmit={handleLogin}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Email address</Form.Label>
-                    <Form.Control
-                      type="email"
-                      placeholder="Enter email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </Form.Group>
+              <Button
+                variant="link"
+                className="w-100 mt-3"
+                onClick={() => setIsRegistering(false)}
+              >
+                Already have an account? Sign in
+              </Button>
+            </Form>
+          ) : (
+            <Form onSubmit={handleLogin}>
+              <Form.Group className="mb-3">
+                <Form.Label>Email address</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="Enter email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                      type="password"
-                      placeholder="Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    className="w-100"
-                    disabled={loading}
-                  >
-                    {loading ? "Logging in..." : "Login"}
-                  </Button>
+              <Button
+                variant="primary"
+                type="submit"
+                className="w-100"
+                disabled={loading}
+              >
+                {loading ? "Logging in..." : "Login"}
+              </Button>
 
-                  <Button
-                    variant="link"
-                    className="w-100 mt-3"
-                    onClick={() => setIsRegistering(true)}
-                  >
-                    New here? Register
-                  </Button>
-                </Form>
-              )}
-            </div>
-          </Col>
-        </Row>
-      </Container>
+              <Button
+                variant="link"
+                className="w-100 mt-3"
+                onClick={() => setIsRegistering(true)}
+              >
+                New here? Register
+              </Button>
+            </Form>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

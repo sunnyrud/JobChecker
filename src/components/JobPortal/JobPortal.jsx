@@ -11,7 +11,6 @@ import {
 } from "react-bootstrap";
 import { FaSearch, FaFilter } from "react-icons/fa";
 import { supabase } from "../../supabase/supabaseClient";
-import SidebarLayout from "../Layout/SidebarLayout";
 import "./JobPortal.css";
 
 const JobPortal = () => {
@@ -114,7 +113,6 @@ const JobPortal = () => {
   };
 
   return (
-    <SidebarLayout>
       <Container fluid className="py-4">
         <h1 className="text-center mb-2">Job Portal</h1>
         <p className="text-center text-muted mb-4">
@@ -299,7 +297,6 @@ const JobPortal = () => {
           </Row>
         )}
       </Container>
-    </SidebarLayout>
   );
 };
 

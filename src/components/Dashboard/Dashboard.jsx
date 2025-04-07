@@ -7,7 +7,6 @@ import {
   FaChartLine,
 } from "react-icons/fa";
 import { supabase } from "../../supabase/supabaseClient";
-import SidebarLayout from "../Layout/SidebarLayout";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -58,7 +57,6 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <SidebarLayout>
       <Container fluid className="py-4">
         <h1 className="text-center mb-2">Welcome to JobPortal</h1>
         <p className="text-center text-muted mb-5">
@@ -135,7 +133,6 @@ const Dashboard = () => {
           </Row>
         )}
       </Container>
-    </SidebarLayout>
   );
 };
 
