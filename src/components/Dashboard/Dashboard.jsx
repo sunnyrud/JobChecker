@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import {
   FaBuilding,
   FaBriefcase,
@@ -65,6 +66,12 @@ const Dashboard = () => {
     setShowCompanies(!showCompanies);
   };
 
+  const navigate = useNavigate();
+
+  const handleJobsClick = () => {
+    navigate("/job-portal");
+  };
+
   return (
     <Container fluid className="py-4">
       <h1 className="text-center mb-2">Welcome to JobPortal</h1>
@@ -111,7 +118,11 @@ const Dashboard = () => {
 
             {/* Total Jobs Card */}
             <Col lg={3} md={6} className="mb-4">
-              <Card className="h-100 shadow-sm">
+              <Card
+                className="h-100 shadow-sm"
+                style={{ cursor: "pointer" }}
+                onClick={handleJobsClick}
+              >
                 <Card.Body className="p-4">
                   <p className="text-muted mb-2 fw-bold text-center">
                     Total Jobs
