@@ -5,6 +5,8 @@ import {
   FaBriefcase,
   FaBriefcase as FaNewJobs,
   FaChartLine,
+  FaAngleDown,
+  FaAngleUp,
 } from "react-icons/fa";
 import { supabase } from "../../supabase/supabaseClient";
 
@@ -14,8 +16,10 @@ const Dashboard = () => {
     totalJobs: 0,
     newJobs: 135,
     marketIncrease: "+12.5%",
+    companies: [],
   });
   const [loading, setLoading] = useState(true);
+  const [showCompanies, setShowCompanies] = useState(false);
 
   useEffect(() => {
     const fetchDashboardStats = async () => {
@@ -29,22 +33,23 @@ const Dashboard = () => {
 
         if (jobsError) throw jobsError;
 
-        // Get unique companies count
+        // Get unique companies count and names
         const { data: companies, error: companiesError } = await supabase
           .from("jobs")
           .select("company_name");
 
         if (companiesError) throw companiesError;
 
-        const uniqueCompanies = new Set(
-          companies.map((job) => job.company_name)
-        );
+        const uniqueCompanies = Array.from(
+          new Set(companies.map((job) => job.company_name))
+        ).sort();
 
         setStats({
-          totalCompanies: uniqueCompanies.size,
+          totalCompanies: uniqueCompanies.length,
           totalJobs: jobsCount || 0,
-          newJobs: 135, // Fixed value as requested
-          marketIncrease: "+12.5%", // Fixed value as requested
+          newJobs: 135,
+          marketIncrease: "+12.5%",
+          companies: uniqueCompanies,
         });
       } catch (error) {
         console.error("Error fetching dashboard stats:", error);
@@ -56,31 +61,49 @@ const Dashboard = () => {
     fetchDashboardStats();
   }, []);
 
-  return (
-      <Container fluid className="py-4">
-        <h1 className="text-center mb-2">Welcome to JobPortal</h1>
-        <p className="text-center text-muted mb-5">
-          We help you to find the jobs
-        </p>
+  const toggleCompanies = () => {
+    setShowCompanies(!showCompanies);
+  };
 
-        {loading ? (
-          <div className="text-center py-5">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
+  return (
+    <Container fluid className="py-4">
+      <h1 className="text-center mb-2">Welcome to JobPortal</h1>
+      <p className="text-center text-muted mb-5">
+        We help you to find the jobs
+      </p>
+
+      {loading ? (
+        <div className="text-center py-5">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
           </div>
-        ) : (
+        </div>
+      ) : (
+        <>
           <Row>
             {/* Total Companies Card */}
             <Col lg={3} md={6} className="mb-4">
-              <Card className="h-100 shadow-sm">
+              <Card
+                className="h-100 shadow-sm"
+                style={{ cursor: "pointer" }}
+                onClick={toggleCompanies}
+              >
                 <Card.Body className="p-4">
                   <p className="text-muted mb-2 fw-bold text-center">
                     Total Companies
                   </p>
                   <h2 className="fw-bold mb-3">{stats.totalCompanies}</h2>
-                  <div className="text-primary">
-                    <FaBuilding size={24} />
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div className="text-primary">
+                      <FaBuilding size={24} />
+                    </div>
+                    <div className="text-primary">
+                      {showCompanies ? (
+                        <FaAngleUp size={24} />
+                      ) : (
+                        <FaAngleDown size={24} />
+                      )}
+                    </div>
                   </div>
                 </Card.Body>
               </Card>
@@ -131,8 +154,32 @@ const Dashboard = () => {
               </Card>
             </Col>
           </Row>
-        )}
-      </Container>
+
+          {/* Companies List */}
+          {showCompanies && (
+            <Row className="mt-4">
+              <Col>
+                <Card className="shadow-sm">
+                  <Card.Body>
+                    <h3 className="mb-4">Company List</h3>
+                    <Row>
+                      {stats.companies.map((company, index) => (
+                        <Col key={index} lg={3} md={4} sm={6} className="mb-3">
+                          <div className="p-3 border rounded d-flex align-items-center">
+                            <FaBuilding className="text-primary me-2" />
+                            <span>{company}</span>
+                          </div>
+                        </Col>
+                      ))}
+                    </Row>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          )}
+        </>
+      )}
+    </Container>
   );
 };
 

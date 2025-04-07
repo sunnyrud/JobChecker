@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Form, Button, Card } from "react-bootstrap";
+import { supabase } from "../../supabase/supabaseClient";
 
 const Profile = () => {
   const [formData, setFormData] = useState({
@@ -10,8 +11,30 @@ const Profile = () => {
     technologies: [],
   });
 
-  // Hardcoded email for prototype
-  const userEmail = "user@example.com";
+  const [userEmail, setUserEmail] = useState("");
+
+  useEffect(() => {
+    const getSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (session?.user?.email) {
+        setUserEmail(session.user.email);
+      }
+    };
+
+    getSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user?.email) {
+        setUserEmail(session.user.email);
+      }
+    });
+
+    return () => {
+      if (authListener?.subscription) {
+        authListener.subscription.unsubscribe();
+      }
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

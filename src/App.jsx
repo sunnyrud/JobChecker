@@ -9,8 +9,9 @@ import { getCurrentUser, supabase } from "./supabase/supabaseClient";
 import Login from "./components/Auth/Login";
 import Dashboard from "./components/Dashboard/Dashboard";
 import JobPortal from "./components/JobPortal/JobPortal";
-
+import ApplyNow from "./components/JobPortal/ApplyNow";
 import Profile from "./components/Profile/Profile";
+import CandidatePool from "./pages/CandidatePool";
 import SidebarLayout from "./components/Layout/SidebarLayout";
 
 function AuthWrapper() {
@@ -86,11 +87,35 @@ function AuthWrapper() {
         }
       />
       <Route
+        path="/apply-now"
+        element={
+          user ? (
+            <SidebarLayout>
+              <ApplyNow />
+            </SidebarLayout>
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
+      <Route
         path="/profile"
         element={
           user ? (
             <SidebarLayout>
               <Profile />
+            </SidebarLayout>
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
+      <Route
+        path="/candidate-pool"
+        element={
+          user ? (
+            <SidebarLayout>
+              <CandidatePool />
             </SidebarLayout>
           ) : (
             <Navigate to="/login" />
