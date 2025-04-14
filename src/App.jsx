@@ -12,6 +12,7 @@ import JobPortal from "./components/JobPortal/JobPortal";
 import ApplyNow from "./components/JobPortal/ApplyNow";
 import Profile from "./components/Profile/Profile";
 import CandidatePool from "./pages/CandidatePool";
+import JobPlanning from "./components/Dashboard/JobPlanning";
 import SidebarLayout from "./components/Layout/SidebarLayout";
 
 function AuthWrapper() {
@@ -92,6 +93,18 @@ function AuthWrapper() {
           user ? (
             <SidebarLayout>
               <ApplyNow />
+            </SidebarLayout>
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
+      <Route
+        path="/job-planning"
+        element={
+          user ? (
+            <SidebarLayout>
+              <JobPlanning />
             </SidebarLayout>
           ) : (
             <Navigate to="/login" />

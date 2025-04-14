@@ -1,0 +1,31 @@
+.job-planning-card {
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.job-planning-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Role items hover effect */
+.role-item {
+  padding: 10px;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+}
+
+.role-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: translateX(5px);
+}
+
+/* Certification badges hover effect */
+.cert-badge {
+  transition: all 0.2s ease;
+}
+
+.cert-badge:hover {
+  transform: scale(1.05);
+}

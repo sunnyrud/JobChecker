@@ -10,6 +10,7 @@ import {
   FaChartLine,
   FaUser,
   FaSignOutAlt,
+  FaClipboardList,
 } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -102,16 +103,16 @@ const SidebarLayout = ({ children }) => {
             <Nav.Item>
               <Nav.Link
                 as={Link}
-                to="/present-trends"
+                to="/job-planning"
                 className={`d-flex align-items-center py-3 px-3 ${
-                  location.pathname === "/present-trends"
+                  location.pathname === "/job-planning"
                     ? "active bg-primary text-white"
                     : "text-white"
                 }`}
                 style={{ color: "#ffffff" }}
               >
-                <FaChartLine className="me-3" />
-                {!collapsed && <span>Present Trends</span>}
+                <FaClipboardList className="me-3" />
+                {!collapsed && <span>Job Planning</span>}
               </Nav.Link>
             </Nav.Item>
 

@@ -10,6 +10,7 @@ import {
   FaAngleUp,
 } from "react-icons/fa";
 import { supabase } from "../../supabase/supabaseClient";
+import Charts from "./Charts";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -18,9 +19,44 @@ const Dashboard = () => {
     newJobs: 135,
     marketIncrease: "+12.5%",
     companies: [],
+    jobs: [
+      {
+        id: 1,
+        job_title: "Cloud Admin",
+        company_name: "Dell",
+        location: "Los Angeles, CA",
+        job_type: "Remote",
+        experience: "Entry Level",
+      },
+      {
+        id: 2,
+        job_title: "Cloud Ops",
+        company_name: "Wipro",
+        location: "New York, NY",
+        job_type: "Hybrid",
+        experience: "Entry Level",
+      },
+      {
+        id: 3,
+        job_title: "Cloud Dev",
+        company_name: "Salesforce",
+        location: "Atlanta, GA",
+        job_type: "On-Site",
+        experience: "Entry Level",
+      },
+      {
+        id: 4,
+        job_title: "Cloud Con",
+        company_name: "Salesforce",
+        location: "New York, NY",
+        job_type: "Hybrid",
+        experience: "Entry Level",
+      },
+    ],
   });
   const [loading, setLoading] = useState(true);
   const [showCompanies, setShowCompanies] = useState(false);
+  const [showNewJobs, setShowNewJobs] = useState(false);
 
   useEffect(() => {
     const fetchDashboardStats = async () => {
@@ -45,13 +81,14 @@ const Dashboard = () => {
           new Set(companies.map((job) => job.company_name))
         ).sort();
 
-        setStats({
+        setStats((prevStats) => ({
+          ...prevStats,
           totalCompanies: uniqueCompanies.length,
           totalJobs: jobsCount || 0,
           newJobs: 135,
           marketIncrease: "+12.5%",
           companies: uniqueCompanies,
-        });
+        }));
       } catch (error) {
         console.error("Error fetching dashboard stats:", error);
       } finally {
@@ -64,6 +101,10 @@ const Dashboard = () => {
 
   const toggleCompanies = () => {
     setShowCompanies(!showCompanies);
+  };
+
+  const toggleNewJobs = () => {
+    setShowNewJobs(!showNewJobs);
   };
 
   const navigate = useNavigate();
@@ -137,14 +178,27 @@ const Dashboard = () => {
 
             {/* New Jobs Card */}
             <Col lg={3} md={6} className="mb-4">
-              <Card className="h-100 shadow-sm">
+              <Card
+                className="h-100 shadow-sm"
+                style={{ cursor: "pointer" }}
+                onClick={toggleNewJobs}
+              >
                 <Card.Body className="p-4">
                   <p className="text-muted mb-2 fw-bold text-center">
-                    New Jobs
+                    New Jobs on cloud
                   </p>
                   <h2 className="fw-bold mb-3">{stats.newJobs}</h2>
-                  <div className="text-primary">
-                    <FaNewJobs size={24} />
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div className="text-primary">
+                      <FaNewJobs size={24} />
+                    </div>
+                    <div className="text-primary">
+                      {showNewJobs ? (
+                        <FaAngleUp size={24} />
+                      ) : (
+                        <FaAngleDown size={24} />
+                      )}
+                    </div>
                   </div>
                 </Card.Body>
               </Card>
@@ -188,6 +242,57 @@ const Dashboard = () => {
               </Col>
             </Row>
           )}
+
+          {/* New Jobs List */}
+          {showNewJobs && (
+            <Row className="mt-4">
+              <Col>
+                <Card className="shadow-sm">
+                  <Card.Body>
+                    <h3 className="mb-4">New Job Listings</h3>
+                    <div className="table-responsive">
+                      <table className="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>Job Title</th>
+                            <th>Company</th>
+                            <th>Location</th>
+                            <th>Job Type</th>
+                            <th>Experience</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {stats.jobs.map((job) => (
+                            <tr key={job.id}>
+                              <td>
+                                <div className="d-flex align-items-center">
+                                  <FaBriefcase className="text-primary me-2" />
+                                  <span className="fw-medium">
+                                    {job.job_title}
+                                  </span>
+                                </div>
+                              </td>
+                              <td>{job.company_name}</td>
+                              <td>{job.location}</td>
+                              <td>
+                                <span className="badge bg-light text-dark">
+                                  {job.job_type}
+                                </span>
+                              </td>
+                              <td>{job.experience}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          )}
+
+          {/* Charts Section */}
+          <Charts />
         </>
       )}
     </Container>
