@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Container, Nav } from "react-bootstrap";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { supabase } from "../../supabase/supabaseClient";
 import TopBar from "./TopBar";
 import {
