@@ -57,6 +57,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [showCompanies, setShowCompanies] = useState(false);
   const [showNewJobs, setShowNewJobs] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState(null); // Add state for selected company
 
   useEffect(() => {
     const fetchDashboardStats = async () => {
@@ -101,10 +102,23 @@ const Dashboard = () => {
 
   const toggleCompanies = () => {
     setShowCompanies(!showCompanies);
+    if (showCompanies) {
+      // Reset selected company when hiding the list
+      setSelectedCompany(null);
+    }
   };
 
   const toggleNewJobs = () => {
     setShowNewJobs(!showNewJobs);
+  };
+
+  // Handler for clicking a company
+  const handleCompanyClick = (companyName) => {
+    setSelectedCompany(companyName);
+    // Optional: Keep the company list open when a company is clicked
+    // if (!showCompanies) {
+    //   setShowCompanies(true);
+    // }
   };
 
   const navigate = useNavigate();
@@ -219,18 +233,25 @@ const Dashboard = () => {
               </Card>
             </Col>
           </Row>
-
           {/* Companies List */}
           {showCompanies && (
             <Row className="mt-4">
               <Col>
                 <Card className="shadow-sm">
                   <Card.Body>
-                    <h3 className="mb-4">Company List</h3>
+                    <h3 className="mb-4">
+                      Company List (Click to filter charts)
+                    </h3>
                     <Row>
                       {stats.companies.map((company, index) => (
                         <Col key={index} lg={3} md={4} sm={6} className="mb-3">
-                          <div className="p-3 border rounded d-flex align-items-center">
+                          <div
+                            className={`p-3 border rounded d-flex align-items-center ${
+                              selectedCompany === company ? "bg-light" : ""
+                            }`}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleCompanyClick(company)} // Add onClick handler
+                          >
                             <FaBuilding className="text-primary me-2" />
                             <span>{company}</span>
                           </div>
@@ -242,7 +263,6 @@ const Dashboard = () => {
               </Col>
             </Row>
           )}
-
           {/* New Jobs List */}
           {showNewJobs && (
             <Row className="mt-4">
@@ -290,9 +310,9 @@ const Dashboard = () => {
               </Col>
             </Row>
           )}
-
           {/* Charts Section */}
-          <Charts />
+          <Charts selectedCompany={selectedCompany} />{" "}
+          {/* Pass selectedCompany to Charts */}
         </>
       )}
     </Container>
