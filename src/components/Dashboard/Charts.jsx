@@ -16,22 +16,6 @@ import {
   Cell,
 } from "recharts";
 
-import {
-  Chart as ChartJS,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  Tooltip as ChartJsTooltip,
-  Legend as ChartJsLegend,
-} from "chart.js";
-
-ChartJS.register(
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  ChartJsTooltip,
-  ChartJsLegend
-);
 
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658"];
 
@@ -130,14 +114,14 @@ const Charts = ({ selectedCompany }) => {
       <Col lg={6} className="mb-4">
         <Card className="shadow-sm h-100">
           <Card.Body className="p-4">
-            <h5 className="card-title mb-4">Jobs by Type (Recharts)</h5>
+            <h5 className="card-title mb-4">Jobs by Type ({selectedCompany || 'All'})</h5>
             <ResponsiveContainer width="100%" height={300}>
               <RechartsBarChart data={dataJobType}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <RechartsTooltip />
-                <RechartsBar dataKey="jobs" fill="#8884d8" />{" "}
+                <RechartsBar dataKey="jobs" fill="#8884d8" />
               </RechartsBarChart>
             </ResponsiveContainer>
           </Card.Body>
@@ -147,7 +131,7 @@ const Charts = ({ selectedCompany }) => {
       <Col lg={6} className="mb-4">
         <Card className="shadow-sm h-100">
           <Card.Body className="p-4">
-            <h5 className="card-title mb-4">Jobs by Experience Level</h5>
+            <h5 className="card-title mb-4">Jobs by Experience Level ({selectedCompany || 'All'})</h5>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
@@ -177,17 +161,19 @@ const Charts = ({ selectedCompany }) => {
                     }%`
                   }
                 />
+                 <RechartsLegend />
               </PieChart>
             </ResponsiveContainer>
           </Card.Body>
         </Card>
       </Col>
+
       <Col lg={6} className="mb-4">
         <Card className="shadow-sm h-100">
           <Card.Body>
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <h5 className="card-title mb-0">Top Companies (Recharts)</h5>
-              <div className="badge bg-light text-dark">Monthly</div>
+              <h5 className="card-title mb-0">Top Companies (Sample)</h5>
+              <div className="badge bg-light text-dark">Openings</div>
             </div>
             <ResponsiveContainer width="100%" height={300}>
               <RechartsBarChart
@@ -203,7 +189,7 @@ const Charts = ({ selectedCompany }) => {
                   dataKey="jobOpenings"
                   name="Job Openings"
                   fill="#4CAF50"
-                />{" "}
+                />
               </RechartsBarChart>
             </ResponsiveContainer>
           </Card.Body>
@@ -214,7 +200,7 @@ const Charts = ({ selectedCompany }) => {
         <Card className="shadow-sm h-100">
           <Card.Body>
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <h5 className="card-title mb-0">Job Market Trends</h5>
+              <h5 className="card-title mb-0">Job Market Trends (Sample)</h5>
               <div className="badge bg-light text-dark">Monthly</div>
             </div>
             <ResponsiveContainer width="100%" height={300}>
@@ -231,7 +217,7 @@ const Charts = ({ selectedCompany }) => {
                   type="monotone"
                   dataKey="marketTrends"
                   name="Market Trends"
-                  stroke="#4CAF50"
+                  stroke="#82ca9d"
                   activeDot={{ r: 8 }}
                 />
               </LineChart>
