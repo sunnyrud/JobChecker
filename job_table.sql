@@ -1,4 +1,3 @@
--- SQL query to create a jobs table based on the provided data structure
 
 CREATE TABLE jobs (
     id SERIAL PRIMARY KEY,
@@ -12,7 +11,6 @@ CREATE TABLE jobs (
     required_skills TEXT[]
 );
 
--- Sample data insertion based on the provided screenshot
 INSERT INTO jobs (job_title, company_name, location, role, job_type, experience, salary, required_skills)
 VALUES
     ('Cloud Admin', 'Dell', 'Los Angeles, CA', 'Internship', 'Remote', 'Entry Level', 142838, ARRAY['Python', 'DevOps', 'Java']),
@@ -23,6 +21,3 @@ VALUES
     ('Azure Dev', 'Intel', 'New York, NY', 'Part-Time', 'On-Site', 'Senior Level', 92882, ARRAY['Linux', 'Python', 'Kubernetes', 'AWS']),
     ('Cloud Ops', 'Dell', 'Denver, CO', 'Full-Time', 'Hybrid', 'Entry Level', 143685, ARRAY['Terraform', 'Docker', 'Linux', 'DevOps']);
 
--- Note: This SQL is compatible with PostgreSQL which is used by Supabase
--- The required_skills column uses an array type to store multiple skills for each job
--- Salary is stored as a numeric value without currency symbol

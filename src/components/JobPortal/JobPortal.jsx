@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Row,
@@ -16,12 +16,11 @@ import "./JobPortal.css";
 
 const JobPortal = () => {
   const navigate = useNavigate();
-  // State for jobs and loading status
+
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // State for filters
   const [searchTerm, setSearchTerm] = useState("");
   const [jobType, setJobType] = useState("");
   const [experience, setExperience] = useState("");
@@ -29,13 +28,10 @@ const JobPortal = () => {
   const [maxSalary, setMaxSalary] = useState(200000);
   const [showFilters, setShowFilters] = useState(false);
 
-  // Job type options
   const jobTypes = ["Remote", "Hybrid", "On-Site"];
 
-  // Experience level options
   const experienceLevels = ["Entry Level", "Mid Level", "Senior Level"];
 
-  // Fetch jobs from Supabase
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -56,16 +52,9 @@ const JobPortal = () => {
     fetchJobs();
   }, []);
 
-  // Apply filters when filter values change
-  useEffect(() => {
-    applyFilters();
-  }, [searchTerm, jobType, experience, minSalary, maxSalary]);
-
-  // Filter jobs based on selected criteria
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let result = [...jobs];
 
-    // Filter by search term (job title or company name)
     if (searchTerm) {
       result = result.filter(
         (job) =>
@@ -90,7 +79,11 @@ const JobPortal = () => {
     );
 
     setFilteredJobs(result);
-  };
+  }, [jobs, searchTerm, jobType, experience, minSalary, maxSalary]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]);
 
   // Reset all filters
   const resetFilters = () => {
@@ -101,7 +94,6 @@ const JobPortal = () => {
     setMaxSalary(200000);
   };
 
-  // Toggle filter section visibility
   const toggleFilters = () => {
     setShowFilters(!showFilters);
   };
@@ -113,7 +105,6 @@ const JobPortal = () => {
         Find your dream job from our curated listings
       </p>
 
-      {/* Search and Filter Section */}
       <Card className="mb-4 shadow-sm">
         <Card.Body>
           <Row className="align-items-center">
@@ -142,7 +133,6 @@ const JobPortal = () => {
             </Col>
           </Row>
 
-          {/* Advanced Filters */}
           {showFilters && (
             <div className="mt-3 pt-3 border-top">
               <Row>
@@ -219,7 +209,7 @@ const JobPortal = () => {
         </Card.Body>
       </Card>
 
-      {/* Job Listings */}
+      {/* job Listing */}
       {loading ? (
         <div className="text-center py-5">
           <div className="spinner-border text-primary" role="status">

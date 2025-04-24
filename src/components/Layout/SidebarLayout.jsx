@@ -7,12 +7,12 @@ import {
   FaTachometerAlt,
   FaBriefcase,
   FaUsers,
-  FaChartLine,
   FaUser,
   FaSignOutAlt,
   FaClipboardList,
 } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./SidebarLayout.css";
 
 const SidebarLayout = ({ children }) => {
   const location = useLocation();
@@ -26,19 +26,11 @@ const SidebarLayout = ({ children }) => {
     <div className="d-flex flex-column min-vh-100">
       <TopBar />
       <div className="d-flex">
-        {/* Sidebar */}
         <div
-          className={`bg-dark text-white ${collapsed ? "collapsed" : ""}`}
-          style={{
-            width: collapsed ? "80px" : "250px",
-            transition: "width 0.3s ease",
-            position: "fixed",
-            height: "100vh",
-            overflowY: "auto",
-            zIndex: 1000,
-          }}
+          className={`sidebar bg-dark text-white ${
+            collapsed ? "collapsed" : ""
+          }`}
         >
-          {/* Sidebar Header */}
           <div className="p-3 d-flex justify-content-between align-items-center">
             {!collapsed && <h5 className="m-0">Job Search</h5>}
             <button
@@ -50,18 +42,16 @@ const SidebarLayout = ({ children }) => {
             </button>
           </div>
 
-          {/* Sidebar Navigation */}
           <Nav className="flex-column mt-2">
             <Nav.Item>
               <Nav.Link
                 as={Link}
                 to="/dashboard"
-                className={`d-flex align-items-center py-3 px-3 ${
+                className={`sidebar-nav-link d-flex align-items-center py-3 px-3 ${
                   location.pathname === "/dashboard"
                     ? "active bg-primary text-white"
                     : "text-white"
                 }`}
-                style={{ color: "#ffffff" }}
               >
                 <FaTachometerAlt className="me-3" />
                 {!collapsed && <span>Dashboard</span>}
@@ -72,12 +62,11 @@ const SidebarLayout = ({ children }) => {
               <Nav.Link
                 as={Link}
                 to="/job-portal"
-                className={`d-flex align-items-center py-3 px-3 ${
+                className={`sidebar-nav-link d-flex align-items-center py-3 px-3 ${
                   location.pathname === "/job-portal"
                     ? "active bg-primary text-white"
                     : "text-white"
                 }`}
-                style={{ color: "#ffffff" }}
               >
                 <FaBriefcase className="me-3" />
                 {!collapsed && <span>Job Portal</span>}
@@ -88,12 +77,11 @@ const SidebarLayout = ({ children }) => {
               <Nav.Link
                 as={Link}
                 to="/candidate-pool"
-                className={`d-flex align-items-center py-3 px-3 ${
+                className={`sidebar-nav-link d-flex align-items-center py-3 px-3 ${
                   location.pathname === "/candidate-pool"
                     ? "active bg-primary text-white"
                     : "text-white"
                 }`}
-                style={{ color: "#ffffff" }}
               >
                 <FaUsers className="me-3" />
                 {!collapsed && <span>Candidate Pool</span>}
@@ -104,12 +92,11 @@ const SidebarLayout = ({ children }) => {
               <Nav.Link
                 as={Link}
                 to="/job-planning"
-                className={`d-flex align-items-center py-3 px-3 ${
+                className={`sidebar-nav-link d-flex align-items-center py-3 px-3 ${
                   location.pathname === "/job-planning"
                     ? "active bg-primary text-white"
                     : "text-white"
                 }`}
-                style={{ color: "#ffffff" }}
               >
                 <FaClipboardList className="me-3" />
                 {!collapsed && <span>Job Planning</span>}
@@ -120,12 +107,11 @@ const SidebarLayout = ({ children }) => {
               <Nav.Link
                 as={Link}
                 to="/profile"
-                className={`d-flex align-items-center py-3 px-3 ${
+                className={`sidebar-nav-link d-flex align-items-center py-3 px-3 ${
                   location.pathname === "/profile"
                     ? "active bg-primary text-white"
                     : "text-white"
                 }`}
-                style={{ color: "#ffffff" }}
               >
                 <FaUser className="me-3" />
                 {!collapsed && <span>Profile</span>}
@@ -142,8 +128,7 @@ const SidebarLayout = ({ children }) => {
                     console.error("Error logging out:", error);
                   }
                 }}
-                className="d-flex align-items-center py-3 px-3 text-white"
-                style={{ cursor: "pointer", color: "#ffffff" }}
+                className="logout-link d-flex align-items-center py-3 px-3 text-white"
               >
                 <FaSignOutAlt className="me-3" />
                 {!collapsed && <span>Logout</span>}
@@ -152,15 +137,7 @@ const SidebarLayout = ({ children }) => {
           </Nav>
         </div>
 
-        {/* Main Content */}
-        <div
-          style={{
-            marginLeft: collapsed ? "80px" : "250px",
-            width: `calc(100% - ${collapsed ? "80px" : "250px"})`,
-            transition: "margin-left 0.3s ease, width 0.3s ease",
-            paddingTop: "60px", // Add padding to account for fixed TopBar
-          }}
-        >
+        <div className={`main-content ${collapsed ? "collapsed" : ""}`}>
           <Container fluid className="p-0">
             {children}
           </Container>

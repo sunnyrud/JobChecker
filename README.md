@@ -22,39 +22,33 @@ Before you begin, ensure you have the following installed:
 ### 1. Create a New Vite Project
 
 ```bash
-# Create a new project with Vite
+# create a new project with Vite
 npx create-vite@latest jobsearch --template react
 
-# Navigate to project directory
+# navigate to project directory
 cd jobsearch
 
-# Install base dependencies
+# install base dependencies
 npm install
 ```
 
 ### 2. Install Required Dependencies
 
 ```bash
-# Install UI framework and styling
 npm install react-bootstrap bootstrap
 
-# Install routing
 npm install react-router-dom
 
-# Install icons
 npm install react-icons
 
-# Install Supabase client
 npm install @supabase/supabase-js
 ```
 
 ### 3. Set Up Project Structure
 
 ```bash
-# Create necessary directories
 mkdir -p src/components/JobPortal src/supabase
 
-# Create required files
 touch src/components/JobPortal/JobPortal.jsx
 touch src/components/JobPortal/JobPortal.css
 touch src/supabase/supabaseClient.js
@@ -136,12 +130,6 @@ npm run dev
 ```
 
 The application will be available at `http://localhost:5173`
-
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
 
 ## Deployment
 

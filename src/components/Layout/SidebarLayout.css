@@ -1,0 +1,38 @@
+.sidebar {
+  transition: width 0.3s ease;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 1000;
+  padding-top: 60px;
+  width: 250px;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+}
+
+.sidebar-nav-link {
+  color: #ffffff !important;
+}
+
+.logout-link {
+  cursor: pointer;
+  color: #ffffff !important;
+}
+
+.main-content {
+  margin-left: 250px;
+  width: calc(100% - 250px);
+  transition: margin-left 0.3s ease, width 0.3s ease;
+  padding-top: 60px;
+}
+
+.main-content.collapsed {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+.sidebar-nav-link svg {
+  margin-right: 1rem;
+}

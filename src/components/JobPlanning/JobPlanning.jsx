@@ -12,10 +12,9 @@ import {
 } from "recharts";
 import { FaCloud, FaCertificate, FaChartBar } from "react-icons/fa";
 import "./JobPlanning.css";
-import CloudRoleGrowthChart from "./CloudRoleGrowthChart"; // Import the new chart component
+import CloudRoleGrowthChart from "./CloudRoleGrowthChart";
 
 const JobPlanning = () => {
-  // Sample data for cloud role salary benchmarks
   const salaryData = [
     { role: "Cloud Architect", salary: 150000 },
     { role: "DevOps Engineer", salary: 130000 },
@@ -27,7 +26,6 @@ const JobPlanning = () => {
   return (
     <>
       <Row className="mt-4">
-        {/* High-Demand Cloud Roles */}
         <Col lg={4} className="mb-4">
           <Card className="shadow-sm h-100 job-planning-card">
             <Card.Header className="bg-primary text-white d-flex align-items-center">
@@ -82,7 +80,6 @@ const JobPlanning = () => {
           </Card>
         </Col>
 
-        {/* Cloud Certifications */}
         <Col lg={4} className="mb-4">
           <Card className="shadow-sm h-100 job-planning-card">
             <Card.Header className="bg-danger text-white d-flex align-items-center">
@@ -147,7 +144,6 @@ const JobPlanning = () => {
           </Card>
         </Col>
 
-        {/* Salary Benchmarks */}
         <Col lg={4} className="mb-4">
           <Card className="shadow-sm h-100 job-planning-card">
             <Card.Header className="bg-info text-white d-flex align-items-center">
@@ -184,7 +180,6 @@ const JobPlanning = () => {
           </Card>
         </Col>
       </Row>
-      {/* Render the new chart component below the row */}
       <Row className="mt-4">
         <Col>
           <CloudRoleGrowthChart />

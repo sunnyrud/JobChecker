@@ -10,6 +10,8 @@ import {
   FaAngleUp,
 } from "react-icons/fa";
 import { supabase } from "../../supabase/supabaseClient";
+
+import CloudJobCompaniesChart from "./CloudJobCompaniesChart";
 import Charts from "./Charts";
 
 const Dashboard = () => {
@@ -57,21 +59,19 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [showCompanies, setShowCompanies] = useState(false);
   const [showNewJobs, setShowNewJobs] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState(null); // Add state for selected company
+  const [selectedCompany, setSelectedCompany] = useState(null);
 
   useEffect(() => {
     const fetchDashboardStats = async () => {
       try {
         setLoading(true);
 
-        // Get total jobs count
         const { count: jobsCount, error: jobsError } = await supabase
           .from("jobs")
           .select("*", { count: "exact", head: true });
 
         if (jobsError) throw jobsError;
 
-        // Get unique companies count and names
         const { data: companies, error: companiesError } = await supabase
           .from("jobs")
           .select("company_name");
@@ -103,7 +103,6 @@ const Dashboard = () => {
   const toggleCompanies = () => {
     setShowCompanies(!showCompanies);
     if (showCompanies) {
-      // Reset selected company when hiding the list
       setSelectedCompany(null);
     }
   };
@@ -112,13 +111,8 @@ const Dashboard = () => {
     setShowNewJobs(!showNewJobs);
   };
 
-  // Handler for clicking a company
   const handleCompanyClick = (companyName) => {
     setSelectedCompany(companyName);
-    // Optional: Keep the company list open when a company is clicked
-    // if (!showCompanies) {
-    //   setShowCompanies(true);
-    // }
   };
 
   const navigate = useNavigate();
@@ -143,7 +137,6 @@ const Dashboard = () => {
       ) : (
         <>
           <Row>
-            {/* Total Companies Card */}
             <Col lg={3} md={6} className="mb-4">
               <Card
                 className="h-100 shadow-sm"
@@ -171,7 +164,6 @@ const Dashboard = () => {
               </Card>
             </Col>
 
-            {/* Total Jobs Card */}
             <Col lg={3} md={6} className="mb-4">
               <Card
                 className="h-100 shadow-sm"
@@ -190,7 +182,6 @@ const Dashboard = () => {
               </Card>
             </Col>
 
-            {/* New Jobs Card */}
             <Col lg={3} md={6} className="mb-4">
               <Card
                 className="h-100 shadow-sm"
@@ -218,7 +209,6 @@ const Dashboard = () => {
               </Card>
             </Col>
 
-            {/* Job Market Increase Card */}
             <Col lg={3} md={6} className="mb-4">
               <Card className="h-100 shadow-sm">
                 <Card.Body className="p-4">
@@ -233,7 +223,6 @@ const Dashboard = () => {
               </Card>
             </Col>
           </Row>
-          {/* Companies List */}
           {showCompanies && (
             <Row className="mt-4">
               <Col>
@@ -250,7 +239,7 @@ const Dashboard = () => {
                               selectedCompany === company ? "bg-light" : ""
                             }`}
                             style={{ cursor: "pointer" }}
-                            onClick={() => handleCompanyClick(company)} // Add onClick handler
+                            onClick={() => handleCompanyClick(company)}
                           >
                             <FaBuilding className="text-primary me-2" />
                             <span>{company}</span>
@@ -263,7 +252,6 @@ const Dashboard = () => {
               </Col>
             </Row>
           )}
-          {/* New Jobs List */}
           {showNewJobs && (
             <Row className="mt-4">
               <Col>
@@ -310,9 +298,18 @@ const Dashboard = () => {
               </Col>
             </Row>
           )}
-          {/* Charts Section */}
-          <Charts selectedCompany={selectedCompany} />{" "}
-          {/* Pass selectedCompany to Charts */}
+
+          <Row className="mt-4">
+            <CloudJobCompaniesChart />
+          </Row>
+
+          {selectedCompany && (
+            <Row className="mt-4">
+              <Col>
+                <Charts selectedCompany={selectedCompany} />
+              </Col>
+            </Row>
+          )}
         </>
       )}
     </Container>

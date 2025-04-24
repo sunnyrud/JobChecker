@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  Container,
-} from "@mui/material";
+import { Container, Row, Col, Card } from "react-bootstrap";
 
 const candidates = [
   {
@@ -48,34 +41,32 @@ const candidates = [
 
 const CandidatePool = () => {
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Candidate Pool
-      </Typography>
-      <Grid container spacing={3}>
+    <Container fluid className="py-4">
+      <h1 className="mb-4">Candidate Pool</h1>
+      <Row xs={1} sm={2} md={3} className="g-4">
         {candidates.map((candidate) => (
-          <Grid item xs={12} sm={6} md={4} key={candidate.id}>
-            <Card sx={{ height: "100%" }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
+          <Col key={candidate.id}>
+            <Card className="h-100 shadow-sm">
+              <Card.Body>
+                <Card.Title as="h5" className="mb-2">
                   {candidate.fullName}
-                </Typography>
-                <Typography color="text.secondary" gutterBottom>
+                </Card.Title>
+                <Card.Subtitle className="mb-2 text-muted">
                   {candidate.email}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
+                </Card.Subtitle>
+                <Card.Text className="text-muted">
                   📍 {candidate.location}
-                </Typography>
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="body2">
-                    Experience: {candidate.experience}
-                  </Typography>
-                </Box>
-              </CardContent>
+                </Card.Text>
+                <div className="mt-3">
+                  <Card.Text>
+                    <strong>Experience:</strong> {candidate.experience}
+                  </Card.Text>
+                </div>
+              </Card.Body>
             </Card>
-          </Grid>
+          </Col>
         ))}
-      </Grid>
+      </Row>
     </Container>
   );
 };

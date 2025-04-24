@@ -3,10 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 
-// Create a single supabase client for interacting with your database
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Authentication helper functions
 export const signUp = async (email, password) => {
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -33,7 +31,6 @@ export const getCurrentUser = async () => {
   return { data, error };
 };
 
-// User profile functions
 export const getUserProfile = async (userId) => {
   const { data, error } = await supabase
     .from("profiles")
@@ -51,7 +48,6 @@ export const updateUserProfile = async (userId, updates) => {
   return { data, error };
 };
 
-// Job preferences functions
 export const saveJobPreferences = async (userId, preferences) => {
   const { data, error } = await supabase
     .from("job_preferences")

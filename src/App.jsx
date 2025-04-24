@@ -12,7 +12,7 @@ import JobPortal from "./components/JobPortal/JobPortal";
 import ApplyNow from "./components/JobPortal/ApplyNow";
 import Profile from "./components/Profile/Profile";
 import CandidatePool from "./pages/CandidatePool";
-import JobPlanning from "./components/Dashboard/JobPlanning";
+import JobPlanning from "./components/JobPlanning/JobPlanning";
 import SidebarLayout from "./components/Layout/SidebarLayout";
 
 function AuthWrapper() {
@@ -37,7 +37,6 @@ function AuthWrapper() {
     };
     checkUser();
 
-    // Subscribe to auth state changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
