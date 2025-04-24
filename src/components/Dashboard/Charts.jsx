@@ -168,33 +168,7 @@ const Charts = ({ selectedCompany }) => {
         </Card>
       </Col>
 
-      <Col lg={6} className="mb-4">
-        <Card className="shadow-sm h-100">
-          <Card.Body>
-            <div className="d-flex justify-content-between align-items-center mb-3">
-              <h5 className="card-title mb-0">Top Companies (Sample)</h5>
-              <div className="badge bg-light text-dark">Openings</div>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <RechartsBarChart
-                data={companyData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <RechartsTooltip />
-                <RechartsLegend />
-                <RechartsBar
-                  dataKey="jobOpenings"
-                  name="Job Openings"
-                  fill="#4CAF50"
-                />
-              </RechartsBarChart>
-            </ResponsiveContainer>
-          </Card.Body>
-        </Card>
-      </Col>
+     
 
       <Col lg={6} className="mb-4">
         <Card className="shadow-sm h-100">

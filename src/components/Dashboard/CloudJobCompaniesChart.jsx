@@ -22,6 +22,7 @@ ChartJS.register(
   Title
 );
 
+// --- Constants defined outside the component ---
 const allCompanies = [
   "Accenture", "Amazon", "Capgemini", "Cisco", "Cognizant", "Dell", "Google",
   "HCL", "IBM", "Infosys", "Intel", "Microsoft", "Oracle",
@@ -47,12 +48,17 @@ const originalDatasetColors = {
   "GCP Cloud Engineer": "#03C03C",
 };
 
-const staticDatasets = Object.entries(originalDatasetColors).map(([label, color]) => ({
+// --- ADDED --- Highlight color for non-selected bars
+const NON_HIGHLIGHT_COLOR = "rgba(211, 211, 211, 0.6)"; // Light grey semi-transparent
+
+// Base dataset structure (used for calculating dynamic colors)
+const baseDatasets = Object.entries(originalDatasetColors).map(([label, color]) => ({
   label: label,
   data: generateRandomData(allCompanies.length),
-  backgroundColor: color,
+  // We'll override backgroundColor dynamically
 }));
 
+// --- Component Starts Here ---
 
 const CloudJobCompaniesChart = ({ highlightedCompany = null }) => {
 
@@ -60,7 +66,6 @@ const CloudJobCompaniesChart = ({ highlightedCompany = null }) => {
 
   useEffect(() => {
     let intervalId = null;
-
     if (highlightedCompany) {
       intervalId = setInterval(() => {
         setBlinkOn(prev => !prev);
@@ -68,7 +73,6 @@ const CloudJobCompaniesChart = ({ highlightedCompany = null }) => {
     } else {
       setBlinkOn(true);
     }
-
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
@@ -77,6 +81,35 @@ const CloudJobCompaniesChart = ({ highlightedCompany = null }) => {
   }, [highlightedCompany]);
 
 
+  // --- MODIFIED --- Calculate dynamic datasets for bar colors
+  const cloudJobCompanyData = useMemo(() => {
+    const highlightedIndex = highlightedCompany
+      ? allCompanies.indexOf(highlightedCompany)
+      : -1; // Find index of the selected company
+
+    const datasets = baseDatasets.map(dataset => {
+      const originalColor = originalDatasetColors[dataset.label];
+      // Create background color array for this dataset
+      const backgroundColors = allCompanies.map((company, index) => {
+        // If this index matches the highlighted company, use its ORIGINAL color
+        // Otherwise, use the NON_HIGHLIGHT_COLOR to grey it out
+        return index === highlightedIndex ? originalColor : NON_HIGHLIGHT_COLOR;
+      });
+
+      return {
+        ...dataset, // Keep label and original data
+        backgroundColor: backgroundColors, // Apply the dynamic colors
+      };
+    });
+
+    return {
+      labels: allCompanies,
+      datasets: datasets,
+    };
+  }, [highlightedCompany]); // Recalculate datasets when highlight changes
+
+
+  // --- Calculate dynamic options for axis label blinking ---
   const cloudJobCompanyOptions = useMemo(() => {
       const tickFontWeights = allCompanies.map(company =>
           company === highlightedCompany ? 'bold' : 'normal'
@@ -84,9 +117,9 @@ const CloudJobCompaniesChart = ({ highlightedCompany = null }) => {
 
       const tickFontColors = allCompanies.map(company => {
           if (company === highlightedCompany) {
-              return blinkOn ? 'red' : defaults.color;
+              return blinkOn ? 'red' : defaults.color; // Blink color
           }
-          return defaults.color;
+          return defaults.color; // Default color for others
       });
 
       return {
@@ -98,7 +131,9 @@ const CloudJobCompaniesChart = ({ highlightedCompany = null }) => {
                   display: true,
                   text: "Distribution of Job Titles Across Cloud Job Companies (USA)",
               },
-              tooltip: {},
+              tooltip: {
+                  // Optional: Customize tooltip if needed, e.g., based on highlight
+              },
           },
           scales: {
               x: {
@@ -119,13 +154,8 @@ const CloudJobCompaniesChart = ({ highlightedCompany = null }) => {
               y: { stacked: true, beginAtZero: true },
           },
       };
-  }, [highlightedCompany, blinkOn]);
+  }, [highlightedCompany, blinkOn]); // Recalculate options on highlight or blink change
 
-
-  const cloudJobCompanyData = {
-      labels: allCompanies,
-      datasets: staticDatasets,
-  };
 
   return (
     <Col lg={12} className="mb-4">
@@ -133,6 +163,7 @@ const CloudJobCompaniesChart = ({ highlightedCompany = null }) => {
         <Card.Body className="p-4 d-flex flex-column">
           <h5 className="card-title mb-4">Cloud Job Companies (USA)</h5>
           <div style={{ flexGrow: 1, height: "500px", position: 'relative' }}>
+            {/* Pass the dynamic data and dynamic options */}
             <Bar data={cloudJobCompanyData} options={cloudJobCompanyOptions} />
           </div>
         </Card.Body>

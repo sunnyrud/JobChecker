@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import {
   FaBuilding,
   FaBriefcase,
@@ -13,6 +12,7 @@ import { supabase } from "../../supabase/supabaseClient";
 
 import CloudJobCompaniesChart from "./CloudJobCompaniesChart";
 import Charts from "./Charts";
+import JobPortal from "../JobPortal/JobPortal";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -32,6 +32,7 @@ const Dashboard = () => {
   const [showCompanies, setShowCompanies] = useState(false);
   const [showNewJobs, setShowNewJobs] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
+  const [showJobPortal, setShowJobPortal] = useState(false);
 
   useEffect(() => {
     const fetchDashboardStats = async () => {
@@ -80,15 +81,14 @@ const Dashboard = () => {
     setShowNewJobs(!showNewJobs);
   };
 
+  const toggleJobPortal = () => {
+    setShowJobPortal(!showJobPortal);
+  };
+
   const handleCompanyClick = (companyName) => {
     setSelectedCompany(prevSelected =>
       prevSelected === companyName ? null : companyName
     );
-  };
-
-  const navigate = useNavigate();
-  const handleJobsClick = () => {
-    navigate("/job-portal");
   };
 
   return (
@@ -119,15 +119,20 @@ const Dashboard = () => {
                 </Card.Body>
               </Card>
             </Col>
+
             <Col lg={3} md={6} className="mb-4">
-              <Card className="h-100 shadow-sm" style={{ cursor: "pointer" }} onClick={handleJobsClick}>
+              <Card className="h-100 shadow-sm" style={{ cursor: "pointer" }} onClick={toggleJobPortal}>
                 <Card.Body className="p-4">
                   <p className="text-muted mb-2 fw-bold text-center">Total Jobs</p>
                   <h2 className="fw-bold mb-3">{stats.totalJobs}</h2>
-                  <div className="text-primary"><FaBriefcase size={24} /></div>
+                  <div className="d-flex justify-content-between align-items-center">
+                     <div className="text-primary"><FaBriefcase size={24} /></div>
+                     <div className="text-primary">{showJobPortal ? <FaAngleUp size={24} /> : <FaAngleDown size={24} />}</div>
+                  </div>
                 </Card.Body>
               </Card>
             </Col>
+
             <Col lg={3} md={6} className="mb-4">
               <Card className="h-100 shadow-sm" style={{ cursor: "pointer" }} onClick={toggleNewJobs}>
                 <Card.Body className="p-4">
@@ -140,6 +145,7 @@ const Dashboard = () => {
                 </Card.Body>
               </Card>
             </Col>
+
             <Col lg={3} md={6} className="mb-4">
               <Card className="h-100 shadow-sm">
                 <Card.Body className="p-4">
@@ -217,6 +223,12 @@ const Dashboard = () => {
                  </Card>
                </Col>
              </Row>
+          )}
+
+          {showJobPortal && (
+            <div className="mt-4">
+              <JobPortal />
+            </div>
           )}
 
           <Row className="mt-4">
