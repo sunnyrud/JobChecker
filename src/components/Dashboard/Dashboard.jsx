@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+// src/components/Dashboard/Dashboard.jsx
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Card, Spinner, Alert } from "react-bootstrap"; // Added Spinner, Alert
 import {
   FaBuilding,
   FaBriefcase,
@@ -8,72 +9,92 @@ import {
   FaAngleDown,
   FaAngleUp,
 } from "react-icons/fa";
-import { supabase } from "../../supabase/supabaseClient";
-
+import { supabase } from "../../supabase/supabaseClient"; // Ensure this path is correct
+import FilterChart from './FilterChart'; // Adjust path if needed
+import PieFilter from "./PieFilter";
+// Import child components
 import CloudJobCompaniesChart from "./CloudJobCompaniesChart";
 import Charts from "./Charts";
-import JobPortal from "../JobPortal/JobPortal";
+import JobPortal from "../JobPortal/JobPortal"; // Ensure this path is correct
+
 
 const Dashboard = () => {
+  // State for dashboard statistics
   const [stats, setStats] = useState({
     totalCompanies: 0,
     totalJobs: 0,
-    newJobs: 4,
-    marketIncrease: "+20%",
+    newJobs: 4, // Example: Consider fetching this dynamically too
+    marketIncrease: "+20%", // Example: Consider fetching/calculating this
     companies: [],
-    jobs: [
-      { id: 1, job_title: "Cloud Admin", company_name: "Dell", location: "Los Angeles, CA", job_type: "Remote", experience: "Entry Level" },
-      { id: 2, job_title: "Cloud Ops", company_name: "Wipro", location: "New York, NY", job_type: "Hybrid", experience: "Entry Level" },
-      { id: 3, job_title: "Cloud Dev", company_name: "Salesforce", location: "Atlanta, GA", job_type: "On-Site", experience: "Entry Level" },
-      { id: 4, job_title: "Cloud Con", company_name: "Salesforce", location: "New York, NY", job_type: "Hybrid", experience: "Entry Level" },
-    ],
   });
+
+  // State to hold the complete list of jobs fetched once
+  const [allJobs, setAllJobs] = useState([]);
+
+  // State for loading and error handling during data fetch
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // State for UI toggles
   const [showCompanies, setShowCompanies] = useState(false);
-  const [showNewJobs, setShowNewJobs] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [showJobPortal, setShowJobPortal] = useState(false);
+  const [showNewJobs, setShowNewJobs] = useState(false); // Keep or remove based on need
 
+  // Fetch all necessary data when the component mounts
   useEffect(() => {
-    const fetchDashboardStats = async () => {
+    const fetchDashboardData = async () => {
+      setLoading(true); // Start loading
+      setError(null); // Reset error state
+
       try {
-        setLoading(true);
+        // Fetch job count, company names, AND all job details in parallel
+        const [jobsCountRes, companyDataRes, allJobsRes] = await Promise.all([
+          supabase.from("jobs").select("*", { count: "exact", head: true }), // Get count
+          supabase.from("jobs").select("company_name"), // Get company names for list
+          supabase.from("jobs").select("*") // Get all job details for children
+        ]);
 
-        const { count: jobsCount, error: jobsError } = await supabase
-          .from("jobs")
-          .select("*", { count: "exact", head: true });
-        if (jobsError) throw jobsError;
+        // Check for errors in each response
+        if (jobsCountRes.error) throw jobsCountRes.error;
+        if (companyDataRes.error) throw companyDataRes.error;
+        if (allJobsRes.error) throw allJobsRes.error;
 
-        const { data: companyData, error: companiesError } = await supabase
-          .from("jobs")
-          .select("company_name");
-        if (companiesError) throw companiesError;
-
+        // Process unique company names
         const uniqueCompanies = Array.from(
-          new Set(companyData.map((job) => job.company_name).filter(Boolean))
+          new Set(companyDataRes.data.map((job) => job.company_name).filter(Boolean))
         ).sort();
 
+        // Update statistics state
         setStats((prevStats) => ({
           ...prevStats,
           totalCompanies: uniqueCompanies.length,
-          totalJobs: jobsCount || 0,
+          totalJobs: jobsCountRes.count || 0,
           companies: uniqueCompanies,
         }));
-      } catch (error) {
-        console.error("Error fetching dashboard stats:", error);
+
+        // Store the fetched list of all jobs
+        setAllJobs(allJobsRes.data || []);
+
+      } catch (err) {
+        // Handle any error during the fetch process
+        console.error("Error fetching dashboard data:", err);
+        setError("Failed to load dashboard data. Please try refreshing."); // Set user-friendly error
       } finally {
+        // Stop loading indicator regardless of success or error
         setLoading(false);
       }
     };
 
-    fetchDashboardStats();
-  }, []);
+    fetchDashboardData(); // Execute the fetch function
+  }, []); // Empty dependency array ensures this runs only once on mount
 
+  // --- UI Toggle Functions ---
   const toggleCompanies = () => {
     const closing = showCompanies;
     setShowCompanies(!showCompanies);
     if (closing) {
-      setSelectedCompany(null);
+      setSelectedCompany(null); // Clear selection when closing
     }
   };
 
@@ -90,6 +111,7 @@ const Dashboard = () => {
       prevSelected === companyName ? null : companyName
     );
   };
+  // --- End UI Toggle Functions ---
 
   return (
     <Container fluid className="py-4">
@@ -98,15 +120,23 @@ const Dashboard = () => {
         We help you to find the jobs
       </p>
 
+      {/* Display Loading Spinner or Error Message */}
       {loading ? (
         <div className="text-center py-5">
-          <div className="spinner-border text-primary" role="status">
+          <Spinner animation="border" role="status" variant="primary">
             <span className="visually-hidden">Loading...</span>
-          </div>
+          </Spinner>
         </div>
+      ) : error ? (
+         <div className="text-center py-5">
+            <Alert variant="danger">{error}</Alert>
+         </div>
       ) : (
+        // Render dashboard content only after loading is complete and no error
         <>
+          {/* Row for Stats Cards */}
           <Row>
+            {/* Total Companies Card */}
             <Col lg={3} md={6} className="mb-4">
               <Card className="h-100 shadow-sm" style={{ cursor: "pointer" }} onClick={toggleCompanies}>
                 <Card.Body className="p-4">
@@ -120,6 +150,7 @@ const Dashboard = () => {
               </Card>
             </Col>
 
+            {/* Total Jobs Card (Toggles JobPortal) */}
             <Col lg={3} md={6} className="mb-4">
               <Card className="h-100 shadow-sm" style={{ cursor: "pointer" }} onClick={toggleJobPortal}>
                 <Card.Body className="p-4">
@@ -133,6 +164,7 @@ const Dashboard = () => {
               </Card>
             </Col>
 
+            {/* New Jobs Card (Example) */}
             <Col lg={3} md={6} className="mb-4">
               <Card className="h-100 shadow-sm" style={{ cursor: "pointer" }} onClick={toggleNewJobs}>
                 <Card.Body className="p-4">
@@ -146,6 +178,7 @@ const Dashboard = () => {
               </Card>
             </Col>
 
+            {/* Market Increase Card (Example) */}
             <Col lg={3} md={6} className="mb-4">
               <Card className="h-100 shadow-sm">
                 <Card.Body className="p-4">
@@ -157,6 +190,7 @@ const Dashboard = () => {
             </Col>
           </Row>
 
+          {/* Conditionally Rendered Company List */}
           {showCompanies && (
             <Row className="mt-4">
               <Col>
@@ -186,60 +220,52 @@ const Dashboard = () => {
             </Row>
           )}
 
+          {/* Conditionally Rendered New Jobs Table (Example) */}
           {showNewJobs && (
              <Row className="mt-4">
+               {/* Consider replacing this with a more dynamic component or removing */}
                <Col>
                  <Card className="shadow-sm">
                    <Card.Body>
                      <h3 className="mb-4">New Job Listings (Sample)</h3>
-                     <div className="table-responsive">
-                       <table className="table table-hover">
-                         <thead>
-                           <tr>
-                             <th>Job Title</th><th>Company</th><th>Location</th><th>Job Type</th><th>Experience</th>
-                           </tr>
-                         </thead>
-                         <tbody>
-                           {stats.jobs.map((job) => (
-                             <tr key={job.id}>
-                               <td>
-                                 <div className="d-flex align-items-center">
-                                   <FaBriefcase className="text-primary me-2" />
-                                   <span className="fw-medium">{job.job_title}</span>
-                                 </div>
-                               </td>
-                               <td>{job.company_name}</td><td>{job.location}</td>
-                               <td><span className="badge bg-light text-dark">{job.job_type}</span></td>
-                               <td>{job.experience}</td>
-                             </tr>
-                           ))}
-                           {stats.jobs.length === 0 && (
-                             <tr><td colSpan="5" className="text-center">No new jobs listed.</td></tr>
-                           )}
-                         </tbody>
-                       </table>
-                     </div>
+                     {/* ... Sample Table ... */}
                    </Card.Body>
                  </Card>
                </Col>
              </Row>
           )}
 
+          {/* Conditionally Render JobPortal and pass the fetched data */}
           {showJobPortal && (
             <div className="mt-4">
-              <JobPortal />
+              <JobPortal jobsData={allJobs} /> {/* Pass allJobs data as prop */}
             </div>
           )}
 
+          {/* CloudJobCompaniesChart */}
           <Row className="mt-4">
+            {/* Ensure this component uses selectedCompany if needed */}
             <CloudJobCompaniesChart highlightedCompany={selectedCompany} />
           </Row>
 
+          {/* Charts Component */}
            <Row className="mt-4">
               <Col>
+                  {/* Ensure this component uses selectedCompany if needed */}
                   <Charts selectedCompany={selectedCompany} />
               </Col>
            </Row>
+           // Inside Dashboard.jsx's return, after loading/error checks:
+           // Inside Dashboard.jsx's return statement
+<Row className="mt-4">
+  <Col md={6} className="mb-4"> {/* Column for FilterChart */}
+    <FilterChart jobsData={allJobs} />
+  </Col>
+  <Col md={6} className="mb-4"> {/* Column for PieFilter */}
+    <PieFilter jobsData={allJobs} />
+  </Col>
+</Row>
+         
         </>
       )}
     </Container>
