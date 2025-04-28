@@ -16,6 +16,15 @@ import PieFilter from "./PieFilter";
 import CloudJobCompaniesChart from "./CloudJobCompaniesChart";
 import Charts from "./Charts";
 import JobPortal from "../JobPortal/JobPortal"; // Ensure this path is correct
+import LocationAnalysis from './LocationAnalysis';
+
+
+// In Dashboard.jsx
+import JobsByRoleType from './JobsByRoleType';
+import JobsByJobType from './JobsByJobType';
+import JobsByExperience from './JobsByExperience';
+
+
 
 
 const Dashboard = () => {
@@ -263,6 +272,26 @@ const Dashboard = () => {
   </Col>
   <Col md={6} className="mb-4"> {/* Column for PieFilter */}
     <PieFilter jobsData={allJobs} />
+  </Col>
+</Row>
+
+<Row className="mt-4">
+  <Col> {/* Takes full width, or adjust Col size */}
+    <LocationAnalysis jobsData={allJobs} />
+  </Col>
+</Row>
+
+
+// Inside the return statement (adjust layout with Rows/Cols as needed)
+<Row className="mt-4">
+  <Col md={6} className="mb-4">
+    <JobsByRoleType jobsData={allJobs} />
+  </Col>
+  <Col md={6} className="mb-4">
+    <JobsByJobType jobsData={allJobs} />
+  </Col>
+  <Col md={6} className="mb-4">
+    <JobsByExperience jobsData={allJobs} />
   </Col>
 </Row>
          

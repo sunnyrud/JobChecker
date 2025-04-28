@@ -1,78 +1,136 @@
-/* JobPlanning.css */
+/* src/components/JobPlanning/JobPlanning.css */
+
+/* Define CSS variables for easier theme management */
+:root {
+  --jp-card-bg-light: linear-gradient(145deg, #ffffff, #f3f4f7);
+  --jp-card-bg-dark: linear-gradient(145deg, #2b3035, #3a4045); /* Darker gradient */
+  --jp-card-shadow-light: 0 6px 12px rgba(0, 0, 0, 0.1);
+  --jp-card-shadow-dark: 0 6px 12px rgba(0, 0, 0, 0.3);
+  --jp-card-hover-shadow-light: 0 12px 24px rgba(0, 0, 0, 0.15);
+  --jp-card-hover-shadow-dark: 0 12px 24px rgba(0, 0, 0, 0.4);
+  --jp-role-item-hover-bg-light: rgba(0, 0, 0, 0.04);
+  --jp-role-item-hover-bg-dark: rgba(255, 255, 255, 0.08);
+  --jp-recharts-text-color: #666; /* Default axis/legend text for light */
+  --jp-recharts-grid-stroke: #ccc; /* Default grid line for light */
+}
+
+[data-bs-theme="dark"] {
+  --jp-recharts-text-color: #adb5bd; /* Lighter text for dark */
+  --jp-recharts-grid-stroke: #495057; /* Darker grid line for dark */
+}
+
 
 .job-planning-card {
   transition: all 0.3s ease;
-  border: none; /* Remove default border */
-  border-radius: 10px; /* Slightly rounder corners */
-  background: linear-gradient(145deg, #ffffff, #f0f2f5); /* Subtle gradient */
+  border: none;
+  border-radius: 10px;
+  /* Use CSS variable for background */
+  background: var(--jp-card-bg-light);
+  box-shadow: var(--jp-card-shadow-light);
 }
 
 .job-planning-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+  box-shadow: var(--jp-card-hover-shadow-light);
 }
+
+/* Apply dark mode styles using the data attribute */
+[data-bs-theme="dark"] .job-planning-card {
+  background: var(--jp-card-bg-dark);
+  box-shadow: var(--jp-card-shadow-dark);
+  /* Bootstrap card usually handles text color, but override if needed */
+  /* color: var(--bs-body-color); */
+}
+
+[data-bs-theme="dark"] .job-planning-card:hover {
+   box-shadow: var(--jp-card-hover-shadow-dark);
+}
+
 
 .job-planning-card .card-header {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
-  font-weight: 600; /* Bolder header text */
+  font-weight: 600;
+  /* Let Bootstrap handle header background/text based on theme */
+  /* Remove specific bg-* overrides below if Bootstrap handles them well */
 }
 
 /* Role items styling */
 .role-item {
-  padding: 12px 15px; /* Increased padding */
+  padding: 12px 15px;
   border-radius: 8px;
   transition: all 0.25s ease;
-  margin-bottom: 1rem; /* Consistent spacing */
+  margin-bottom: 1rem;
 }
-
-.role-item:last-child {
-  margin-bottom: 0; /* Remove margin for the last item */
-}
+.role-item:last-child { margin-bottom: 0; }
 
 .role-item:hover {
-  background-color: rgba(0, 0, 0, 0.04); /* Slightly darker hover */
-  transform: translateX(6px); /* More pronounced hover effect */
+  background-color: var(--jp-role-item-hover-bg-light);
+  transform: translateX(6px);
+}
+[data-bs-theme="dark"] .role-item:hover {
+  background-color: var(--jp-role-item-hover-bg-dark);
 }
 
 .role-item span:first-child {
-  font-weight: 500; /* Slightly bolder role name */
+  font-weight: 500;
+  /* Text color should be inherited */
 }
 
 /* Certification badges styling */
+/* Bootstrap badges adapt reasonably well, specific overrides might not be needed */
 .cert-badge {
   transition: all 0.25s ease;
   font-weight: 500;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
 .cert-badge:hover {
   transform: scale(1.08);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+[data-bs-theme="dark"] .cert-badge {
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Darker shadow */
+}
+[data-bs-theme="dark"] .cert-badge:hover {
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* Specific Card Header Colors (Optional - Keep or adjust as needed) */
-.job-planning-card .bg-primary {
-  background-color: #0d6efd !important; /* Ensure Bootstrap primary color */
-}
 
-.job-planning-card .bg-danger {
-  background-color: #dc3545 !important; /* Ensure Bootstrap danger color */
-}
+/* Specific Card Header Colors - Keep these as they define the card type */
+/* Ensure text contrast remains acceptable in dark mode automatically */
+.job-planning-card .bg-primary { background-color: #0d6efd !important; }
+.job-planning-card .bg-danger { background-color: #dc3545 !important; }
+.job-planning-card .bg-info { background-color: #0dcaf0 !important; }
 
-.job-planning-card .bg-info {
-  background-color: #0dcaf0 !important; /* Ensure Bootstrap info color */
-}
 
-/* Chart adjustments */
+/* Chart adjustments - Use CSS variables */
 .recharts-wrapper {
-  margin-top: 1rem; /* Add some space above the chart */
+  margin-top: 1rem;
 }
 
 .recharts-legend-wrapper {
-  padding-top: 10px !important; /* Space between chart and legend */
+  padding-top: 10px !important;
 }
 
-.recharts-cartesian-axis-tick-value tspan {
-  font-size: 11px; /* Slightly larger axis labels */
+/* Target Recharts text elements */
+.recharts-cartesian-axis-tick-value tspan,
+.recharts-legend-item-text {
+  font-size: 11px;
+  fill: var(--jp-recharts-text-color) !important; /* Use variable and !important if needed */
 }
+
+/* Target Recharts grid lines */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+    stroke: var(--jp-recharts-grid-stroke) !important; /* Use variable */
+}
+
+/* Target Recharts Tooltip */
+.recharts-tooltip-wrapper {
+    /* Tooltip background/text should adapt via Bootstrap if not overridden */
+    /* Example explicit styling if needed: */
+    /* background: var(--bs-body-bg) !important; */
+    /* border: 1px solid var(--bs-border-color) !important; */
+    /* color: var(--bs-body-color) !important; */
+}
+

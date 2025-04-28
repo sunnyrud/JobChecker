@@ -1,38 +1,86 @@
+/* src/components/Layout/SidebarLayout.css */
+
+/* --- Sidebar Styles --- */
 .sidebar {
-  transition: width 0.3s ease;
-  position: fixed;
-  height: 100vh;
-  overflow-y: auto;
-  z-index: 1000;
-  padding-top: 60px;
-  width: 250px;
+  width: 250px; /* Width when expanded */
+  position: fixed; /* Keep sidebar fixed */
+  top: 0; /* Align to top */
+  left: 0; /* Align to left */
+  height: 100vh; /* Full viewport height */
+  padding-top: 60px; /* Space for the TopBar (adjust if TopBar height changes) */
+  overflow-y: auto; /* Allow scrolling within the sidebar if content overflows */
+  z-index: 1000; /* Ensure sidebar stays above most content */
+  background-color: #212529; /* Example dark background (use theme variable if needed) */
+  color: #ffffff; /* Default text color */
+  /* Add the smooth transition for width */
+  transition: width 0.3s ease-in-out;
+  display: flex; /* Use flexbox for internal layout */
+  flex-direction: column; /* Stack children vertically */
 }
 
 .sidebar.collapsed {
-  width: 80px;
+  width: 80px; /* Width when collapsed */
 }
 
-.sidebar-nav-link {
-  color: #ffffff !important;
+/* --- Main Content Styles --- */
+.main-content {
+  margin-left: 250px; /* Margin matching expanded sidebar */
+  width: calc(100% - 250px); /* Take remaining width */
+  padding-top: 60px; /* Space for the TopBar (match sidebar padding-top) */
+  min-height: 100vh; /* Ensure it takes at least full viewport height */
+  /* Add the smooth transitions for margin and width */
+  transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+
+.main-content.collapsed {
+  margin-left: 80px; /* Margin matching collapsed sidebar */
+  width: calc(100% - 80px); /* Adjust width */
+}
+
+/* --- Navigation Link Styles --- */
+.sidebar-nav-link,
+.logout-link {
+  color: #ffffff !important; /* Ensure text color (important might be needed to override bootstrap) */
+  transition: background-color 0.2s ease; /* Smooth background transition on hover */
+  border-radius: 0.25rem;
+  margin: 0.1rem 0.5rem; /* Add some spacing */
+  display: flex; /* Ensure flex alignment works */
+  align-items: center; /* Vertically align icon and text */
+}
+
+.sidebar-nav-link svg,
+.logout-link svg {
+  margin-right: 1rem; /* Keep your original margin */
+  min-width: 1.25em; /* Ensure space for icon even when text is hidden */
+  flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.sidebar-nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
+  color: #ffffff !important; /* Keep text white on hover */
+}
+
+.sidebar-nav-link.active {
+  /* Active styles are handled by className logic in the component */
+  /* background-color: #0d6efd; /* Example: Bootstrap primary blue */
+  /* color: #ffffff !important; */
 }
 
 .logout-link {
   cursor: pointer;
-  color: #ffffff !important;
 }
 
-.main-content {
-  margin-left: 250px;
-  width: calc(100% - 250px);
-  transition: margin-left 0.3s ease, width 0.3s ease;
-  padding-top: 60px;
+.logout-link:hover {
+   background-color: rgba(255, 87, 87, 0.2); /* Reddish hover for logout */
+   color: #ffffff !important;
 }
 
-.main-content.collapsed {
-  margin-left: 80px;
-  width: calc(100% - 80px);
+/* Optional: Hide text smoothly when collapsed (might need adjustment based on exact HTML) */
+.sidebar.collapsed .sidebar-nav-link span,
+.sidebar.collapsed .logout-link span {
+  /* display: none; */ /* Hiding is handled by the component logic */
+  /* You could add opacity transition if hiding via CSS */
+  /* opacity: 0; */
+  /* transition: opacity 0.1s ease-out; */
 }
 
-.sidebar-nav-link svg {
-  margin-right: 1rem;
-}
