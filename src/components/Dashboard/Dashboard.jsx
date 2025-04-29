@@ -1,6 +1,14 @@
 // src/components/Dashboard/Dashboard.jsx
-import React, { useState, useEffect, useMemo } from "react"; // Added useMemo
-import { Container, Row, Col, Card, Spinner, Alert } from "react-bootstrap";
+import React, { useState, useEffect, useMemo } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Spinner,
+  Alert,
+  Badge,
+} from "react-bootstrap";
 import {
   FaBuilding,
   FaBriefcase,
@@ -9,18 +17,19 @@ import {
   FaAngleDown,
   FaAngleUp,
 } from "react-icons/fa";
-import { supabase } from "../../supabase/supabaseClient"; // Ensure this path is correct
+
+import { supabase } from "../../supabase/supabaseClient";
 
 // Import child components
-import FilterChart from "./FilterChart"; // Adjust path if needed
-import PieFilter from "./PieFilter"; // Adjust path if needed
-import CloudJobCompaniesChart from "./CloudJobCompaniesChart"; // Adjust path if needed
-import Charts from "./Charts"; // Adjust path if needed
-import JobPortal from "../JobPortal/JobPortal"; // Ensure this path is correct
-import LocationAnalysis from "./LocationAnalysis"; // Adjust path if needed
-import JobsByRoleType from "./JobsByRoleType"; // Adjust path if needed
-import JobsByJobType from "./JobsByJobType"; // Adjust path if needed
-import JobsByExperience from "./JobsByExperience"; // Adjust path if needed
+import FilterChart from "./FilterChart";
+import PieFilter from "./PieFilter";
+import CloudJobCompaniesChart from "./CloudJobCompaniesChart";
+import Charts from "./Charts";
+import JobPortal from "../JobPortal/JobPortal";
+import LocationAnalysis from "./LocationAnalysis";
+import JobsByRoleType from "./JobsByRoleType";
+import JobsByJobType from "./JobsByJobType";
+import JobsByExperience from "./JobsByExperience";
 
 const Dashboard = () => {
   // --- Core Data State ---
@@ -32,8 +41,8 @@ const Dashboard = () => {
   const [stats, setStats] = useState({
     totalCompanies: 0,
     totalJobs: 0,
-    newJobs: 4, // Example
-    marketIncrease: "+20%", // Example
+    newJobs: 4,
+    marketIncrease: "+20%", // Keep example or calculate
     companies: [],
   });
   const [showCompanies, setShowCompanies] = useState(false);
@@ -45,35 +54,45 @@ const Dashboard = () => {
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [selectedJobType, setSelectedJobType] = useState("All");
 
+  // --- Navigation ---
+
   // --- Fetch Data ---
   useEffect(() => {
     const fetchDashboardData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const [jobsCountRes, companyDataRes, allJobsRes] = await Promise.all([
-          supabase.from("jobs").select("*", { count: "exact", head: true }),
-          supabase.from("jobs").select("company_name"),
-          supabase.from("jobs").select("*"),
-        ]);
+        // Fetch Total Count FIRST
+        const { count: totalJobsCount, error: countError } = await supabase
+          .from("jobs")
+          .select("*", { count: "exact", head: true });
 
-        if (jobsCountRes.error) throw jobsCountRes.error;
-        if (companyDataRes.error) throw companyDataRes.error;
-        if (allJobsRes.error) throw allJobsRes.error;
+        if (countError) throw countError;
 
+        // Fetch ALL Job Details
+        const { data: allJobsData, error: jobsError } = await supabase
+          .from("jobs")
+          .select("*")
+          .order("id", { ascending: false });
+
+        if (jobsError) throw jobsError;
+
+        const fetchedJobs = allJobsData || [];
+        setAllJobs(fetchedJobs);
+
+        // Calculate stats based on the FULL dataset
         const uniqueCompanies = Array.from(
-          new Set(
-            companyDataRes.data.map((job) => job.company_name).filter(Boolean)
-          )
+          new Set(fetchedJobs.map((job) => job.company_name).filter(Boolean))
         ).sort();
+        const newJobsCount = Math.min(4, totalJobsCount || 0);
 
-        setStats((prevStats) => ({
-          ...prevStats,
+        setStats({
           totalCompanies: uniqueCompanies.length,
-          totalJobs: jobsCountRes.count || 0,
+          totalJobs: totalJobsCount || 0,
+          newJobs: newJobsCount,
+          marketIncrease: "+20%", // Keep example or calculate
           companies: uniqueCompanies,
-        }));
-        setAllJobs(allJobsRes.data || []);
+        });
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
         setError("Failed to load dashboard data. Please try refreshing.");
@@ -100,7 +119,7 @@ const Dashboard = () => {
     return { locations, jobTypes };
   }, [allJobs]);
 
-  // --- Derive Filtered Data (based on shared filters) ---
+  // --- Derive Filtered Data ---
   const filteredJobsData = useMemo(() => {
     if (!allJobs) return [];
     return allJobs.filter((job) => {
@@ -112,22 +131,20 @@ const Dashboard = () => {
     });
   }, [allJobs, selectedLocation, selectedJobType]);
 
-  // --- Filter Change Handlers ---
-  const handleLocationChange = (location) => {
-    setSelectedLocation(location);
-  };
+  // --- Get Top 4 Jobs ---
+  const topNewJobs = useMemo(() => {
+    return allJobs.slice(0, stats.newJobs);
+  }, [allJobs, stats.newJobs]);
 
-  const handleJobTypeChange = (jobType) => {
-    setSelectedJobType(jobType);
-  };
+  // --- Filter Change Handlers ---
+  const handleLocationChange = (location) => setSelectedLocation(location);
+  const handleJobTypeChange = (jobType) => setSelectedJobType(jobType);
 
   // --- UI Toggle Functions ---
   const toggleCompanies = () => {
     const closing = showCompanies;
     setShowCompanies(!showCompanies);
-    if (closing) {
-      setSelectedCompany(null);
-    }
+    if (closing) setSelectedCompany(null);
   };
   const toggleNewJobs = () => setShowNewJobs(!showNewJobs);
   const toggleJobPortal = () => setShowJobPortal(!showJobPortal);
@@ -156,7 +173,7 @@ const Dashboard = () => {
         <>
           {/* Stats Row */}
           <Row>
-            {/* Total Companies Card */}
+            {/* Total Companies Card - FIXED */}
             <Col lg={3} md={6} className="mb-4">
               <Card
                 className="h-100 shadow-sm"
@@ -167,7 +184,8 @@ const Dashboard = () => {
                   <p className="text-muted mb-2 fw-bold text-center">
                     Total Companies
                   </p>
-                  <h2 className="fw-bold mb-3">{stats.totalCompanies}</h2>
+                  <h2 className="fw-bold mb-3">{stats.totalCompanies}</h2>{" "}
+                  {/* Display value */}
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="text-primary">
                       <FaBuilding size={24} />
@@ -194,7 +212,8 @@ const Dashboard = () => {
                   <p className="text-muted mb-2 fw-bold text-center">
                     Total Jobs
                   </p>
-                  <h2 className="fw-bold mb-3">{stats.totalJobs}</h2>
+                  <h2 className="fw-bold mb-3">{stats.totalJobs}</h2>{" "}
+                  {/* Display value */}
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="text-primary">
                       <FaBriefcase size={24} />
@@ -210,7 +229,7 @@ const Dashboard = () => {
                 </Card.Body>
               </Card>
             </Col>
-            {/* New Jobs Card */}
+            {/* New Jobs Card - FIXED */}
             <Col lg={3} md={6} className="mb-4">
               <Card
                 className="h-100 shadow-sm"
@@ -219,9 +238,10 @@ const Dashboard = () => {
               >
                 <Card.Body className="p-4">
                   <p className="text-muted mb-2 fw-bold text-center">
-                    New Jobs on cloud
+                    New Job Listings
                   </p>
-                  <h2 className="fw-bold mb-3">{stats.newJobs}</h2>
+                  <h2 className="fw-bold mb-3">{stats.newJobs}</h2>{" "}
+                  {/* Display value */}
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="text-primary">
                       <FaPlusCircle size={24} />
@@ -237,14 +257,15 @@ const Dashboard = () => {
                 </Card.Body>
               </Card>
             </Col>
-            {/* Market Increase Card */}
+            {/* Market Increase Card - FIXED */}
             <Col lg={3} md={6} className="mb-4">
               <Card className="h-100 shadow-sm">
                 <Card.Body className="p-4">
                   <p className="text-muted mb-2 fw-bold text-center">
                     Job Market Increase
                   </p>
-                  <h2 className="fw-bold mb-3">{stats.marketIncrease}</h2>
+                  <h2 className="fw-bold mb-3">{stats.marketIncrease}</h2>{" "}
+                  {/* Display value */}
                   <div className="text-primary">
                     <FaChartLine size={24} />
                   </div>
@@ -253,7 +274,7 @@ const Dashboard = () => {
             </Col>
           </Row>
 
-          {/* Conditionally Rendered Sections */}
+          {/* Conditionally Rendered Company List */}
           {showCompanies && (
             <Row className="mt-4">
               <Col>
@@ -286,21 +307,78 @@ const Dashboard = () => {
               </Col>
             </Row>
           )}
+
+          {/* --- Conditionally Rendered New Jobs List --- */}
           {showNewJobs && (
             <Row className="mt-4">
               <Col>
                 <Card className="shadow-sm">
+                  <Card.Header as="h5" className="py-3">
+                    New Job Listings
+                  </Card.Header>
                   <Card.Body>
-                    <h3 className="mb-4">New Job Listings (Sample)</h3>
-                    {/* Add sample table or dynamic list here if needed */}
+                    {topNewJobs.length === 0 ? (
+                      <p className="text-muted">No new jobs to display.</p>
+                    ) : (
+                      <Row>
+                        {topNewJobs.map((job) => (
+                          <Col
+                            lg={6}
+                            xl={3}
+                            md={6}
+                            className="mb-4"
+                            key={`new-${job.id}`}
+                          >
+                            <Card className="h-100 job-card shadow-sm">
+                              <Card.Body className="d-flex flex-column">
+                                <div className="d-flex justify-content-between align-items-start mb-3">
+                                  <div>
+                                    <h5 className="card-title mb-1">
+                                      {job.job_title || "N/A"}
+                                    </h5>
+                                    <h6 className="text-muted">
+                                      {job.company_name || "N/A"}
+                                    </h6>
+                                  </div>
+                                  <Badge
+                                    bg="secondary"
+                                    className="job-type-badge flex-shrink-0"
+                                  >
+                                    {job.job_type || "N/A"}
+                                  </Badge>
+                                </div>
+                                <div className="mb-3">
+                                  <div className="d-flex align-items-center mb-2 small text-muted">
+                                    <strong className="me-2">Location:</strong>{" "}
+                                    {job.location || "N/A"}
+                                  </div>
+                                  <div className="d-flex align-items-center mb-2 small text-muted">
+                                    <strong className="me-2">
+                                      Experience:
+                                    </strong>{" "}
+                                    {job.experience || "N/A"}
+                                  </div>
+                                  <div className="d-flex align-items-center mb-2 small text-muted">
+                                    <strong className="me-2">Salary:</strong> $
+                                    {job.salary?.toLocaleString() ?? "N/A"}
+                                  </div>
+                                </div>
+                              </Card.Body>
+                            </Card>
+                          </Col>
+                        ))}
+                      </Row>
+                    )}
                   </Card.Body>
                 </Card>
               </Col>
             </Row>
           )}
+
+          {/* Conditionally Render JobPortal */}
           {showJobPortal && (
             <div className="mt-4">
-              <JobPortal jobsData={allJobs} /> {/* JobPortal needs all data */}
+              <JobPortal jobsData={allJobs} />
             </div>
           )}
 
@@ -308,36 +386,36 @@ const Dashboard = () => {
           <Row className="mt-4">
             <Col md={6} className="mb-4">
               <FilterChart
-                jobsData={filteredJobsData} // Pass filtered data
+                jobsData={filteredJobsData}
                 locationOptions={filterOptions.locations}
                 jobTypeOptions={filterOptions.jobTypes}
                 selectedLocation={selectedLocation}
                 selectedJobType={selectedJobType}
-                onLocationChange={handleLocationChange} // Pass handlers
+                onLocationChange={handleLocationChange}
                 onJobTypeChange={handleJobTypeChange}
               />
             </Col>
             <Col md={6} className="mb-4 d-flex justify-content-center">
               <div style={{ width: "100%" }}>
                 <PieFilter
-                  jobsData={filteredJobsData} // Pass filtered data
-                  allJobsData={allJobs} // Pass all data for legend context
-                  selectedLocation={selectedLocation} // Pass filter status
-                  selectedJobType={selectedJobType} // Pass filter status
+                  jobsData={filteredJobsData}
+                  allJobsData={allJobs}
+                  selectedLocation={selectedLocation}
+                  selectedJobType={selectedJobType}
                 />
               </div>
             </Col>
           </Row>
 
-          {/* --- Charts Row 2 (Donut Charts - Using allJobs for now) --- */}
+          {/* --- Charts Row 2 (Donut Charts) --- */}
           <Row className="mt-4">
-            <Col md={4} className="mb-4">
+            <Col lg={4} md={6} className="mb-4">
               <JobsByRoleType jobsData={allJobs} />
             </Col>
-            <Col md={4} className="mb-4">
+            <Col lg={4} md={6} className="mb-4">
               <JobsByJobType jobsData={allJobs} />
             </Col>
-            <Col md={4} className="mb-4">
+            <Col lg={4} md={12} className="mb-4">
               <JobsByExperience jobsData={allJobs} />
             </Col>
           </Row>
@@ -345,17 +423,19 @@ const Dashboard = () => {
           {/* --- Charts Row 3 (Other Existing Charts) --- */}
           <Row className="mt-4">
             <Col>
-              <CloudJobCompaniesChart highlightedCompany={selectedCompany} />
+              <CloudJobCompaniesChart
+                highlightedCompany={selectedCompany}
+                jobsData={allJobs}
+              />
             </Col>
           </Row>
           <Row className="mt-4">
             <Col>
-              <Charts selectedCompany={selectedCompany} />
+              <Charts selectedCompany={selectedCompany} jobsData={allJobs} />
             </Col>
           </Row>
           <Row className="mt-4">
             <Col>
-              {/* LocationAnalysis might need filtered data too, or its own filters */}
               <LocationAnalysis jobsData={allJobs} />
             </Col>
           </Row>
