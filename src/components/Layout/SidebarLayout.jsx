@@ -4,7 +4,7 @@ import { Container, Nav } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import { supabase } from "../../supabase/supabaseClient"; // Adjust path if needed
 import TopBar from "./TopBar"; // Adjust path if needed
-import ThemeToggle from './ThemeToggle'; // Import the ThemeToggle component
+import ThemeToggle from "./ThemeToggle"; // Import the ThemeToggle component
 import {
   FaTachometerAlt,
   FaBriefcase,
@@ -29,8 +29,9 @@ const SidebarLayout = ({ children }) => {
     // Outermost container
     <div className="d-flex flex-column min-vh-100">
       <TopBar /> {/* Your existing TopBar */}
-      <div className="d-flex flex-grow-1"> {/* Added flex-grow-1 */}
-
+      <div className="d-flex flex-grow-1">
+        {" "}
+        {/* Added flex-grow-1 */}
         {/* Sidebar */}
         <div
           // Use Bootstrap's theme-aware background utility
@@ -70,8 +71,8 @@ const SidebarLayout = ({ children }) => {
               </Nav.Link>
             </Nav.Item>
 
-            {/* Job Portal Link */}
-            <Nav.Item>
+            {/* Job Portal Link 
+                  <Nav.Item>
               <Nav.Link
                 as={Link}
                 to="/job-portal"
@@ -85,38 +86,39 @@ const SidebarLayout = ({ children }) => {
                 {!collapsed && <span>Job Portal</span>}
               </Nav.Link>
             </Nav.Item>
+            */}
 
             {/* Candidate Pool Link */}
-             <Nav.Item>
-               <Nav.Link
-                 as={Link}
-                 to="/candidate-pool"
-                 className={`sidebar-nav-link d-flex align-items-center py-3 px-3 ${
-                   location.pathname === "/candidate-pool"
-                     ? "active bg-primary text-white"
-                     : "text-white"
-                 }`}
-               >
-                 <FaUsers className="me-3" />
-                 {!collapsed && <span>Candidate Pool</span>}
-               </Nav.Link>
-             </Nav.Item>
+            <Nav.Item>
+              <Nav.Link
+                as={Link}
+                to="/candidate-pool"
+                className={`sidebar-nav-link d-flex align-items-center py-3 px-3 ${
+                  location.pathname === "/candidate-pool"
+                    ? "active bg-primary text-white"
+                    : "text-white"
+                }`}
+              >
+                <FaUsers className="me-3" />
+                {!collapsed && <span>Candidate Pool</span>}
+              </Nav.Link>
+            </Nav.Item>
 
             {/* Job Planning Link */}
-             <Nav.Item>
-               <Nav.Link
-                 as={Link}
-                 to="/job-planning"
-                 className={`sidebar-nav-link d-flex align-items-center py-3 px-3 ${
-                   location.pathname === "/job-planning"
-                     ? "active bg-primary text-white"
-                     : "text-white"
-                 }`}
-               >
-                 <FaClipboardList className="me-3" />
-                 {!collapsed && <span>Job Planning</span>}
-               </Nav.Link>
-             </Nav.Item>
+            <Nav.Item>
+              <Nav.Link
+                as={Link}
+                to="/job-planning"
+                className={`sidebar-nav-link d-flex align-items-center py-3 px-3 ${
+                  location.pathname === "/job-planning"
+                    ? "active bg-primary text-white"
+                    : "text-white"
+                }`}
+              >
+                <FaClipboardList className="me-3" />
+                {!collapsed && <span>Job Planning</span>}
+              </Nav.Link>
+            </Nav.Item>
 
             {/* Profile Link */}
             <Nav.Item>
@@ -135,11 +137,14 @@ const SidebarLayout = ({ children }) => {
             </Nav.Item>
 
             {/* Spacer to push items below down */}
-             <div className="mt-auto"></div>
+            <div className="mt-auto"></div>
 
             {/* Theme Toggle Item - Placed before Logout */}
-            <Nav.Item className="px-3 py-2"> {/* Add some padding */}
-               <ThemeToggle isCollapsed={collapsed} /> {/* Pass collapsed state */}
+            <Nav.Item className="px-3 py-2">
+              {" "}
+              {/* Add some padding */}
+              <ThemeToggle isCollapsed={collapsed} />{" "}
+              {/* Pass collapsed state */}
             </Nav.Item>
 
             {/* Logout Link (at the bottom) */}
@@ -153,7 +158,7 @@ const SidebarLayout = ({ children }) => {
                   }
                 }}
                 className="logout-link d-flex align-items-center py-3 px-3 text-white"
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: "pointer" }}
               >
                 <FaSignOutAlt className="me-3" />
                 {!collapsed && <span>Logout</span>}
@@ -161,18 +166,19 @@ const SidebarLayout = ({ children }) => {
             </Nav.Item>
           </Nav>
         </div>
-
         {/* Main Content Area */}
-        <div className={`main-content flex-grow-1 ${collapsed ? "collapsed" : ""}`}>
-          <Container fluid className="p-4"> {/* Added padding */}
+        <div
+          className={`main-content flex-grow-1 ${collapsed ? "collapsed" : ""}`}
+        >
+          <Container fluid className="p-4">
+            {" "}
+            {/* Added padding */}
             {children}
           </Container>
         </div>
-
-      </div> {/* End of inner d-flex */}
-
+      </div>{" "}
+      {/* End of inner d-flex */}
       {/* REMOVED ThemeToggle from here */}
-
     </div> // End of outermost container
   );
 };
