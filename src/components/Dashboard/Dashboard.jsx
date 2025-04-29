@@ -17,14 +17,26 @@ import {
   FaAngleDown,
   FaAngleUp,
 } from "react-icons/fa";
-
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabase/supabaseClient";
+
+// Import Recharts components needed for the Line Chart
+import {
+  LineChart,
+  Line,
+  XAxis as RechartsXAxis,
+  YAxis as RechartsYAxis, // Renamed to avoid conflict
+  CartesianGrid as RechartsCartesianGrid,
+  Tooltip as RechartsTooltip,
+  Legend as RechartsLegend,
+  ResponsiveContainer,
+} from "recharts";
 
 // Import child components
 import FilterChart from "./FilterChart";
 import PieFilter from "./PieFilter";
 import CloudJobCompaniesChart from "./CloudJobCompaniesChart";
-import Charts from "./Charts";
+import Charts from "./Charts"; // Still needed for the other 2 charts
 import JobPortal from "../JobPortal/JobPortal";
 import LocationAnalysis from "./LocationAnalysis";
 import JobsByRoleType from "./JobsByRoleType";
@@ -49,14 +61,16 @@ const Dashboard = () => {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [showJobPortal, setShowJobPortal] = useState(false);
   const [showNewJobs, setShowNewJobs] = useState(false);
+  const [showMarketTrendChart, setShowMarketTrendChart] = useState(false); // <-- State for trend chart
 
   // --- Shared Filter State ---
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [selectedJobType, setSelectedJobType] = useState("All");
 
   // --- Navigation ---
+  const navigate = useNavigate();
 
-  // --- Fetch Data ---
+  // --- Fetch Data (remains the same) ---
   useEffect(() => {
     const fetchDashboardData = async () => {
       setLoading(true);
@@ -66,7 +80,6 @@ const Dashboard = () => {
         const { count: totalJobsCount, error: countError } = await supabase
           .from("jobs")
           .select("*", { count: "exact", head: true });
-
         if (countError) throw countError;
 
         // Fetch ALL Job Details
@@ -74,7 +87,6 @@ const Dashboard = () => {
           .from("jobs")
           .select("*")
           .order("id", { ascending: false });
-
         if (jobsError) throw jobsError;
 
         const fetchedJobs = allJobsData || [];
@@ -103,7 +115,7 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
-  // --- Derive Filter Options ---
+  // --- Derive Filter Options (remains the same) ---
   const filterOptions = useMemo(() => {
     if (!allJobs || allJobs.length === 0) {
       return { locations: ["All"], jobTypes: ["All"] };
@@ -119,7 +131,7 @@ const Dashboard = () => {
     return { locations, jobTypes };
   }, [allJobs]);
 
-  // --- Derive Filtered Data ---
+  // --- Derive Filtered Data (remains the same) ---
   const filteredJobsData = useMemo(() => {
     if (!allJobs) return [];
     return allJobs.filter((job) => {
@@ -131,12 +143,12 @@ const Dashboard = () => {
     });
   }, [allJobs, selectedLocation, selectedJobType]);
 
-  // --- Get Top 4 Jobs ---
+  // --- Get Top 4 Jobs (remains the same) ---
   const topNewJobs = useMemo(() => {
     return allJobs.slice(0, stats.newJobs);
   }, [allJobs, stats.newJobs]);
 
-  // --- Filter Change Handlers ---
+  // --- Filter Change Handlers (remains the same) ---
   const handleLocationChange = (location) => setSelectedLocation(location);
   const handleJobTypeChange = (jobType) => setSelectedJobType(jobType);
 
@@ -151,6 +163,19 @@ const Dashboard = () => {
   const handleCompanyClick = (companyName) => {
     setSelectedCompany((prev) => (prev === companyName ? null : companyName));
   };
+  const toggleMarketTrendChart = () =>
+    setShowMarketTrendChart(!showMarketTrendChart); // <-- Toggle function for trend chart
+
+  // --- Sample Data for Market Trend Chart ---
+  // (Moved from Charts.jsx - consider fetching real data later)
+  const marketTrendData = [
+    { month: "Jan", marketTrends: 25 },
+    { month: "Feb", marketTrends: 20 },
+    { month: "Mar", marketTrends: 40 },
+    { month: "Apr", marketTrends: 30 },
+    { month: "May", marketTrends: 50 }, // Added more sample data
+    { month: "Jun", marketTrends: 45 },
+  ];
 
   return (
     <Container fluid className="py-4">
@@ -173,7 +198,7 @@ const Dashboard = () => {
         <>
           {/* Stats Row */}
           <Row>
-            {/* Total Companies Card - FIXED */}
+            {/* Total Companies Card */}
             <Col lg={3} md={6} className="mb-4">
               <Card
                 className="h-100 shadow-sm"
@@ -184,8 +209,7 @@ const Dashboard = () => {
                   <p className="text-muted mb-2 fw-bold text-center">
                     Total Companies
                   </p>
-                  <h2 className="fw-bold mb-3">{stats.totalCompanies}</h2>{" "}
-                  {/* Display value */}
+                  <h2 className="fw-bold mb-3">{stats.totalCompanies}</h2>
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="text-primary">
                       <FaBuilding size={24} />
@@ -212,8 +236,7 @@ const Dashboard = () => {
                   <p className="text-muted mb-2 fw-bold text-center">
                     Total Jobs
                   </p>
-                  <h2 className="fw-bold mb-3">{stats.totalJobs}</h2>{" "}
-                  {/* Display value */}
+                  <h2 className="fw-bold mb-3">{stats.totalJobs}</h2>
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="text-primary">
                       <FaBriefcase size={24} />
@@ -229,7 +252,7 @@ const Dashboard = () => {
                 </Card.Body>
               </Card>
             </Col>
-            {/* New Jobs Card - FIXED */}
+            {/* New Jobs Card */}
             <Col lg={3} md={6} className="mb-4">
               <Card
                 className="h-100 shadow-sm"
@@ -240,8 +263,7 @@ const Dashboard = () => {
                   <p className="text-muted mb-2 fw-bold text-center">
                     New Job Listings
                   </p>
-                  <h2 className="fw-bold mb-3">{stats.newJobs}</h2>{" "}
-                  {/* Display value */}
+                  <h2 className="fw-bold mb-3">{stats.newJobs}</h2>
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="text-primary">
                       <FaPlusCircle size={24} />
@@ -257,24 +279,79 @@ const Dashboard = () => {
                 </Card.Body>
               </Card>
             </Col>
-            {/* Market Increase Card - FIXED */}
+            {/* Market Increase Card - Now Clickable */}
             <Col lg={3} md={6} className="mb-4">
-              <Card className="h-100 shadow-sm">
+              <Card
+                className="h-100 shadow-sm"
+                style={{ cursor: "pointer" }}
+                onClick={toggleMarketTrendChart}
+              >
+                {" "}
+                {/* Added onClick */}
                 <Card.Body className="p-4">
                   <p className="text-muted mb-2 fw-bold text-center">
                     Job Market Increase
                   </p>
-                  <h2 className="fw-bold mb-3">{stats.marketIncrease}</h2>{" "}
-                  {/* Display value */}
-                  <div className="text-primary">
-                    <FaChartLine size={24} />
+                  <h2 className="fw-bold mb-3">{stats.marketIncrease}</h2>
+                  {/* Added toggle icon */}
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div className="text-primary">
+                      <FaChartLine size={24} />
+                    </div>
+                    <div className="text-primary">
+                      {showMarketTrendChart ? (
+                        <FaAngleUp size={24} />
+                      ) : (
+                        <FaAngleDown size={24} />
+                      )}
+                    </div>
                   </div>
                 </Card.Body>
               </Card>
             </Col>
           </Row>
 
-          {/* Conditionally Rendered Company List */}
+          {/* --- Conditionally Rendered Market Trend Chart --- */}
+          {showMarketTrendChart && (
+            <Row className="mt-4">
+              <Col>
+                <Card className="shadow-sm">
+                  <Card.Body>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <h5 className="card-title mb-0">
+                        Job Market Trends (Sample)
+                      </h5>
+                      <div className="badge bg-light text-dark">Monthly</div>{" "}
+                      {/* Example badge */}
+                    </div>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <LineChart
+                        data={marketTrendData}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <RechartsCartesianGrid strokeDasharray="3 3" />
+                        <RechartsXAxis dataKey="month" />
+                        <RechartsYAxis />
+                        <RechartsTooltip />
+                        <RechartsLegend />
+                        <Line
+                          type="monotone"
+                          dataKey="marketTrends"
+                          name="Market Trends"
+                          stroke="#82ca9d" // Chart color
+                          activeDot={{ r: 8 }}
+                          isAnimationActive={true} // Added animation
+                          animationDuration={500}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          )}
+
+          {/* --- Other Conditionally Rendered Sections --- */}
           {showCompanies && (
             <Row className="mt-4">
               <Col>
@@ -307,8 +384,6 @@ const Dashboard = () => {
               </Col>
             </Row>
           )}
-
-          {/* --- Conditionally Rendered New Jobs List --- */}
           {showNewJobs && (
             <Row className="mt-4">
               <Col>
@@ -374,15 +449,34 @@ const Dashboard = () => {
               </Col>
             </Row>
           )}
-
-          {/* Conditionally Render JobPortal */}
           {showJobPortal && (
             <div className="mt-4">
               <JobPortal jobsData={allJobs} />
             </div>
           )}
 
-          {/* --- Charts Row 1 (FilterChart & PieFilter with Shared Filters) --- */}
+          <Row className="mt-4">
+            <Col>
+              <CloudJobCompaniesChart
+                highlightedCompany={selectedCompany}
+                jobsData={allJobs}
+              />{" "}
+            </Col>{" "}
+          </Row>
+
+          <Row className="mt-4">
+            {" "}
+            <Col>
+              {" "}
+              <Charts
+                selectedCompany={selectedCompany}
+                jobsData={allJobs}
+              />{" "}
+            </Col>{" "}
+          </Row>
+
+          {/* --- Charts Rows --- */}
+          {/* Row 1 (Filter & Pie) */}
           <Row className="mt-4">
             <Col md={6} className="mb-4">
               <FilterChart
@@ -407,36 +501,28 @@ const Dashboard = () => {
             </Col>
           </Row>
 
-          {/* --- Charts Row 2 (Donut Charts) --- */}
+          {/* Row 3 (Other Charts - Render remaining from Charts.jsx) */}
+
+          <Row className="mt-4">
+            {" "}
+            <Col>
+              {" "}
+              <LocationAnalysis jobsData={allJobs} />{" "}
+            </Col>{" "}
+          </Row>
+          {/* Row 2 (Donuts) */}
           <Row className="mt-4">
             <Col lg={4} md={6} className="mb-4">
-              <JobsByRoleType jobsData={allJobs} />
+              {" "}
+              <JobsByRoleType jobsData={allJobs} />{" "}
             </Col>
             <Col lg={4} md={6} className="mb-4">
-              <JobsByJobType jobsData={allJobs} />
+              {" "}
+              <JobsByJobType jobsData={allJobs} />{" "}
             </Col>
             <Col lg={4} md={12} className="mb-4">
-              <JobsByExperience jobsData={allJobs} />
-            </Col>
-          </Row>
-
-          {/* --- Charts Row 3 (Other Existing Charts) --- */}
-          <Row className="mt-4">
-            <Col>
-              <CloudJobCompaniesChart
-                highlightedCompany={selectedCompany}
-                jobsData={allJobs}
-              />
-            </Col>
-          </Row>
-          <Row className="mt-4">
-            <Col>
-              <Charts selectedCompany={selectedCompany} jobsData={allJobs} />
-            </Col>
-          </Row>
-          <Row className="mt-4">
-            <Col>
-              <LocationAnalysis jobsData={allJobs} />
+              {" "}
+              <JobsByExperience jobsData={allJobs} />{" "}
             </Col>
           </Row>
         </>
